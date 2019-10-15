@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  server:
+    container_name: questo_server
+    build: .
+    ports:
+      - "4000:4000"
+    volumes:
+      - ".:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    networks:
+      - questo_network
+#    env variables to access dynamodb-local from this container
+#    environment:
+#      - AWS_ACCESS_KEY_ID=1234567890
+#      - AWS_SECRET_ACCESS_KEY=1234567890
+#      - AWS_REGION=eu-west-2
+
+  # dynamodb instance for local development
+  dynamodb:
+    container_name: questo_dynamodb
+    hostname: questo_dynamodb
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    networks:
+      - questo_network
+
+  # dynamodb script creating table in the local instance of dynamodb
+  dynamodb_create_table:
+    container_name: dynamodb_create_table
+    build:
+      context: .
+      dockerfile: Dockerfile-dynamodb-table
+    environment:
+      - AWS_ACCESS_KEY_ID=1234567890
+      - AWS_SECRET_ACCESS_KEY=1234567890
+      - AWS_REGION=eu-west-2
+    networks:
+      - questo_network
+
+networks:
+  questo_network:
+    driver: bridge

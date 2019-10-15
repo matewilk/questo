@@ -1,0 +1,8 @@
+# IDEs
+.idea/
+
+# node
+node_modules
+
+# infrastructure
+**/**/.terraform

@@ -1,0 +1,16 @@
+FROM node:12
+
+RUN apt-get update && \
+    apt-get install -y \
+        python \
+        python-dev \
+        python-pip \
+        python-setuptools \
+        groff \
+        less \
+    && pip install --upgrade awscli \
+    && apt-get clean
+
+COPY create_dynamodb_local.sh .
+RUN ["chmod", "+x", "create_dynamodb_local.sh"]
+CMD ["sh", "create_dynamodb_local.sh"]

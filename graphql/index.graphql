@@ -1,0 +1,18 @@
+type User {
+    name: String
+    age: Int
+}
+
+type Question {
+    text: String
+}
+
+type Answer {
+    value: String
+}
+
+type Query {
+    users: [User]
+    questions: [Question]
+    answers: [Answer]
+}
