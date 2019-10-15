@@ -1,9 +1,8 @@
 import { ApolloServer, gql } from "apollo-server";
-import query from "../graphql/index.graphql";
+import schema from "./graphql/schema";
+import dotenv from "dotenv";
 
-const typeDefs = gql`
-	${query}
-`;
+dotenv.config();
 
 const users = [
 	{ id: 1, name: 'Bob', age: 20 },
@@ -53,7 +52,10 @@ const resolvers = {
 	}
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+	typeDefs: schema,
+	resolvers
+});
 
 server.listen().then(({ url }) => {
 	console.log(`🚀  Server ready at ${url}`);

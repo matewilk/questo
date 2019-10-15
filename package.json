@@ -13,11 +13,12 @@
     "@babel/node": "^7.6.2",
     "@babel/preset-env": "^7.6.2",
     "apollo-server": "^2.9.4",
+    "aws-sdk": "^2.550.0",
+    "dotenv": "^8.1.0",
     "graphql": "^14.5.8",
-    "jest": "^24.9.0",
     "nodemon": "^1.19.3"
   },
   "devDependencies": {
-    "babel-plugin-import-graphql": "^2.7.0"
+    "jest": "^24.9.0"
   }
 }

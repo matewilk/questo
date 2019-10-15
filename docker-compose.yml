@@ -8,7 +8,6 @@ services:
       - "4000:4000"
     volumes:
       - ".:/usr/src/app"
-      - "/usr/src/app/node_modules"
     networks:
       - questo_network
 #    env variables to access dynamodb-local from this container
