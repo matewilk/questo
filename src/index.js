@@ -47,8 +47,11 @@ const answers = [
 const resolvers = {
 	Query: {
 		answers: () => answers,
+		answer: (parent, args) => answers[args.id],
 		questions: () => questions,
-		users: () => users
+		question: (parent, args) => questions[args.id],
+		users: () => users,
+		user: (parent, args) => users[args.id],
 	}
 };
 
