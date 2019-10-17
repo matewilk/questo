@@ -4,7 +4,7 @@
   "description": "Questo API ",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon --inspect --exec babel-node src/index.js",
+    "start": "nodemon --inspect=0.0.0.0 --exec babel-node src/index.js",
     "start:docker:dev": "docker-compose up",
     "stop:docker:dev": "docker-compose down",
     "test": "jest --verbose"

@@ -16,7 +16,9 @@ For Dev development:
 - the app is exposed to `http://localhsot:4000`
 
 For Dev Debugging:
-- run `npm run start` (without docker)
+- run `start:docker:dev` like for development
+  - `docker-compose.yaml` exposes `9229` nodemon default debug port
+  - `start` npm script passes `--inspect=0.0.0.0` to `nodemon` which allows to connect from any address
 - use WebStorm `Attach to Node.js/Chrome` config with
   - `reconnect automatically` option
   - port `9229` which is a default `nodemon --inspect` port
