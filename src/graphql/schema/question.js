@@ -10,5 +10,6 @@ export default gql`
 	  ID: ID!
     text: String!
     count: Int!
+	  answers: [Answer!]
   }
 `;

@@ -1,34 +1,36 @@
-import { ApolloServer, gql } from "apollo-server";
+import { ApolloServer } from "apollo-server";
 import schema from "./graphql/schema";
 import dotenv from "dotenv";
 
+import QuestoSource from "./graphql/dataSource/questo_table";
+
 dotenv.config();
 
-const users = [
-	{ id: 1, name: 'Bob', age: 20 },
-	{ id: 2, name: 'Jane', age: 23 },
-	{ id: 3, name: 'Ted', age: 21 }
-];
+const users = {
+	1: { id: 1, name: 'Bob', age: 20 },
+	2: { id: 2, name: 'Jane', age: 23 },
+	3: { id: 3, name: 'Ted', age: 21 }
+};
 
-const questions = [
-	{ id: 1, text: 'How old are you?' },
-	{ id: 2, text: 'What is your favorite colour?' },
-	{ id: 3, text: 'What is your name?' }
-];
+const questions = {
+	1: { id: 1, text: 'How old are you?' },
+	2: { id: 2, text: 'What is your favorite colour?' },
+	3: { id: 3, text: 'What is your name?' }
+};
 
-const answers = [
-	{ value: '23', user: users[1], question: questions[0] },
-	{ value: 'blue', user: users[1], question: questions[1] },
-	{ value: 'Jane', user: users[1], question: questions[2] },
+const answers = {
+	1: { value: '23', user: users[1], question: questions[0] },
+	2: { value: 'blue', user: users[1], question: questions[1] },
+	3: { value: 'Jane', user: users[1], question: questions[2] },
 
-	{ value: '55', user: users[0], question: questions[0] },
-	{ value: 'red', user: users[0], question: questions[1] },
-	{ value: 'Rob', user: users[0], question: questions[2] },
+	4: { value: '55', user: users[0], question: questions[0] },
+	5: { value: 'red', user: users[0], question: questions[1] },
+	6: { value: 'Rob', user: users[0], question: questions[2] },
 
-	{ value: '21', user: users[2], question: questions[0] },
-	{ value: 'pink', user: users[2], question: questions[1] },
-	{ value: 'Ted', user: users[2], question: questions[2] },
-];
+	7: { value: '21', user: users[2], question: questions[0] },
+	8: { value: 'pink', user: users[2], question: questions[1] },
+	9: { value: 'Ted', user: users[2], question: questions[2] },
+};
 
 /**
 
@@ -46,18 +48,27 @@ const answers = [
 
 const resolvers = {
 	Query: {
-		answers: () => answers,
+		answers: () => Object.values(answers),
 		answer: (parent, args) => answers[args.id],
-		questions: () => questions,
+		questions: () => Object.values(questions),
 		question: (parent, args) => questions[args.id],
-		users: () => users,
-		user: (parent, args) => users[args.id],
-	}
+		users: () => Object.values(users),
+		user: (parent, {id}) => users[id],
+		me: (parent, arts, { me }) => me
+	},
 };
 
 const server = new ApolloServer({
 	typeDefs: schema,
-	resolvers
+	resolvers,
+	context: {
+		me: users[1]
+	},
+	dataSources: () => {
+		return {
+			questoSource: new QuestoSource()
+		}
+	}
 });
 
 server.listen().then(({ url }) => {

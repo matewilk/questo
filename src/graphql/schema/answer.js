@@ -9,5 +9,6 @@ export default gql`
   type Answer {
     ID: ID!
     value: String!
+    user: User
   }
 `;

@@ -1,5 +1,4 @@
 import AWS from "aws-sdk";
-import dotenv from "dotenv";
 
 export default class Database {
 	async connect() {
