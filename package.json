@@ -17,13 +17,16 @@
     "apollo-server": "^2.9.4",
     "aws-sdk": "^2.550.0",
     "dotenv": "^8.1.0",
-    "graphql": "^14.5.8",
-    "nodemon": "^1.19.3"
+    "graphql": "^14.5.8"
   },
   "devDependencies": {
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "nodemon": "^1.19.4",
+    "typescript": "^3.6.4"
   },
   "jest": {
-    "setupFiles": ["dotenv/config"]
+    "setupFiles": [
+      "dotenv/config"
+    ]
   }
 }

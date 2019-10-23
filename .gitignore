@@ -6,3 +6,7 @@ node_modules
 
 # infrastructure
 **/**/.terraform
+
+
+# build
+build
