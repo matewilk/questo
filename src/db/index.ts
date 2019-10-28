@@ -1,6 +1,7 @@
 import AWS from "aws-sdk";
 
 export default class Database {
+	private _connection: AWS.DynamoDB;
 	async connect() {
 		if (!this._connection){
 			const params = {

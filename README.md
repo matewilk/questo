@@ -11,12 +11,12 @@ Docker configuration (currently only for local development):
     - (this container might be replaced by seeding the db on local db connect)
     
 For Dev development:
-- `start:docker:dev` - starts the `start` npm script inside docker container
-- `stop:docker:dev` - stops dev containers
+- `docker:dev:start` - starts the `start` npm script inside docker container
+- `docker:dev:stop` - stops dev containers
 - the app is exposed to `http://localhsot:4000`
 
 For Dev Debugging:
-- run `start:docker:dev` like for development
+- run `docker:dev:start` like for development
   - `docker-compose.yaml` exposes `9229` nodemon default debug port
   - `start` npm script passes `--inspect=0.0.0.0` to `nodemon` which allows to connect from any address
 - use WebStorm `Attach to Node.js/Chrome` config with

@@ -4,9 +4,10 @@
   "description": "Questo API ",
   "main": "src/index.js",
   "scripts": {
-    "start": "nodemon --inspect=0.0.0.0 --exec babel-node src/index.js",
-    "start:docker:dev": "docker-compose up",
-    "stop:docker:dev": "docker-compose down",
+    "type-check": "tsc",
+    "start": "nodemon --inspect=0.0.0.0 --exec babel-node --extensions '.ts' src/index.ts",
+    "docker:dev:start": "docker-compose up",
+    "docker:dev:stop": "docker-compose down",
     "test": "jest --verbose"
   },
   "author": "matewilk",
@@ -20,6 +21,9 @@
     "graphql": "^14.5.8"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.6.0",
+    "@babel/register": "^7.6.2",
+    "@types/jest": "^24.0.20",
     "jest": "^24.9.0",
     "nodemon": "^1.19.4",
     "typescript": "^3.6.4"

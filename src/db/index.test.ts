@@ -8,7 +8,7 @@ jest.mock("aws-sdk", () => {
 });
 
 describe("database", () => {
-	let db;
+	let db: Database;
 	beforeEach(() => {
 		db = new Database();
 	});

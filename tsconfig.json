@@ -6,7 +6,9 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "noImplicitReturns": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "pretty": true,
+    "skipLibCheck": true
   },
   "include": [
     "./src/**/*"
