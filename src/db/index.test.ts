@@ -1,11 +1,10 @@
-import Database from "./index";
+import Database, { GetItem, PutItem } from "./index";
 import AWS from "aws-sdk";
-import {PutItemInput} from "aws-sdk/clients/dynamodb";
 
 jest.mock("aws-sdk", () => {
 	return {
 		DynamoDB: jest.fn(() => ({
-			putItem: jest.fn(),
+			putItem: jest.fn().mockImplementation((params, callback) => callback(null, 'test')),
 			getItem: jest.fn().mockImplementation((params, callback) => callback(null, 'test')),
 			scan: jest.fn().mockImplementation((params, callback) => callback(null, 'test'))
 		}))
@@ -15,6 +14,9 @@ jest.mock("aws-sdk", () => {
 describe("Database", () => {
 	let db: Database;
 	let connection: AWS.DynamoDB;
+	let putItem: PutItem = { ID: 'USR_1', type: 'QR_QUE_1', params: {}};
+	let getItem: GetItem = { ID: 'QUE_1', type: 'AR_ANS_1' };
+
 	beforeEach(async () => {
 		db = new Database();
 		connection = await db.connect();
@@ -30,19 +32,37 @@ describe("Database", () => {
 	});
 
 	it("should call putItem successfully", async () => {
-		connection.putItem.mockImplementation((params: PutItemInput, callback) => callback(null, 'test'));
+		const expectedDynamoItem = {
+			Item: { ID: { S: putItem.ID }, type: { S: putItem.type }, parameters: { M: {} } },
+			TableName: process.env.DB_TABLE_NAME
+		};
 
-		const item = {};
-		await db.putItem(item);
+		await db.putItem(putItem);
 
-		expect(connection.putItem).toHaveBeenCalledWith(item, expect.anything());
+		expect(connection.putItem).toHaveBeenCalledWith(expectedDynamoItem, expect.anything());
+	});
+
+	it("should call putItem and reject", async () => {
+		connection.putItem.mockImplementation((putItem, callback) => callback('putItem error'));
+
+		await expect(db.putItem(putItem)).rejects.toMatch('putItem error')
 	});
 
 	it("should call getItem successfully", async () => {
-		const item = {};
-		await db.getItem(item);
+		const expectedDynamoItem = {
+			Key: { ID: { S: getItem.ID }, type: { S: getItem.type } },
+			TableName: process.env.DB_TABLE_NAME
+		};
 
-		expect(connection.getItem).toHaveBeenCalledWith(item, expect.anything());
+		await db.getItem(getItem);
+
+		expect(connection.getItem).toHaveBeenCalledWith(expectedDynamoItem, expect.anything());
+	});
+
+	it("should call getItem and reject", async () => {
+		connection.getItem.mockImplementation((param, callback) => callback('getItem error'));
+
+		await expect(db.getItem(getItem)).rejects.toMatch('getItem error')
 	});
 
 	it("should call scan successfully", async () => {
@@ -50,5 +70,12 @@ describe("Database", () => {
 		await db.scan(item);
 
 		expect(connection.scan).toHaveBeenCalledWith(item, expect.anything());
+	});
+
+	it("should call scan and reject", async () => {
+		connection.scan.mockImplementation((param, callback) => callback('scan error'));
+		const item = {};
+
+		await expect(db.scan(item)).rejects.toMatch('scan error')
 	});
 });

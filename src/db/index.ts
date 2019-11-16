@@ -1,5 +1,16 @@
 import AWS from "aws-sdk";
 
+export interface PutItem {
+	ID: string
+	type: string
+	params: object
+}
+
+export interface GetItem {
+	ID: string
+	type: string
+}
+
 export default class Database {
 	private _connection: AWS.DynamoDB;
 	async connect() {
@@ -17,11 +28,28 @@ export default class Database {
 		return this._connection;
 	}
 
-	async putItem(params) {
+	async putItem(params: PutItem) {
+		const item = {
+			ID: {
+				S: params.ID
+			},
+			type: {
+				S: params.type
+			},
+			parameters: {
+				M: params.params as {}
+			}
+		};
+
+		const dynamoItem = {
+			Item: item,
+			TableName: process.env.DB_TABLE_NAME
+		};
+
 		return new Promise((resolve, reject) => {
-			this._connection.putItem(params, (err, data) => {
+			this._connection.putItem(dynamoItem, (err, data) => {
 				if (err) {
-					reject(err);
+					 reject(err);
 				} else {
 					resolve(data);
 				}
@@ -29,9 +57,23 @@ export default class Database {
 		});
 	}
 
-	async getItem(params) {
+	async getItem(params: GetItem) {
+		const item = {
+			ID: {
+				S: params.ID
+			},
+			type: {
+				S: params.type
+			}
+		};
+
+		const dynamoItem = {
+			Key: item,
+			TableName: process.env.DB_TABLE_NAME
+		};
+
 		return new Promise((resolve, reject) => {
-			this._connection.getItem(params, (err, data) => {
+			this._connection.getItem(dynamoItem, (err, data) => {
 				if (err) {
 					reject(err);
 				} else {
