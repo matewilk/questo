@@ -1,4 +1,4 @@
-import Database, { GetItem, PutItem } from "./index";
+import Database, { GetItem, PutItem, Scan } from "./index";
 import AWS from "aws-sdk";
 
 jest.mock("aws-sdk", () => {
@@ -16,6 +16,7 @@ describe("Database", () => {
 	let connection: AWS.DynamoDB;
 	let putItem: PutItem = { ID: 'USR_1', type: 'QR_QUE_1', params: {}};
 	let getItem: GetItem = { ID: 'QUE_1', type: 'AR_ANS_1' };
+	let scan: Scan = { params: {} };
 
 	beforeEach(async () => {
 		db = new Database();
@@ -66,10 +67,14 @@ describe("Database", () => {
 	});
 
 	it("should call scan successfully", async () => {
-		const item = {};
-		await db.scan(item);
+		const expectedScanItem = {
+			ExpressionAttributeValues: scan,
+			TableName: process.env.DB_TABLE_NAME
+		};
 
-		expect(connection.scan).toHaveBeenCalledWith(item, expect.anything());
+		await db.scan(scan);
+
+		expect(connection.scan).toHaveBeenCalledWith(expectedScanItem, expect.anything());
 	});
 
 	it("should call scan and reject", async () => {

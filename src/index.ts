@@ -2,7 +2,7 @@ import { ApolloServer } from "apollo-server";
 import schema from "./graphql/schema";
 import dotenv from "dotenv";
 
-import QuestoSource from "./graphql/dataSource/questo_table";
+import QuestoSource from "./graphql/dataSource/questo";
 
 dotenv.config();
 
@@ -71,6 +71,6 @@ const server = new ApolloServer({
 	}
 });
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url }: { url: string }) => {
 	console.log(`🚀  Server ready at ${url}`);
 });

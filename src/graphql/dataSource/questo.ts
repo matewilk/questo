@@ -1,6 +1,7 @@
 import Database from "../../db";
 
 export default class QuestoSource {
+	public _db: Database;
 	async getDatabase() {
 		if (!this._db) {
 			this._db = new Database();
@@ -8,5 +9,10 @@ export default class QuestoSource {
 		}
 
 		return this._db;
+	}
+
+	async put(data) {
+		const db = await this.getDatabase();
+		await db.putItem(data);
 	}
 }
