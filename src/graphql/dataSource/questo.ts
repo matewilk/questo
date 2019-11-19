@@ -13,7 +13,9 @@ export interface GetItem {
 }
 
 export interface Scan {
-	params: object
+	ExpressionAttributeValues?: object
+	ProjectionExpression?: string
+	FilterExpression?: string
 }
 
 export default class QuestoSource {
@@ -32,7 +34,17 @@ export default class QuestoSource {
 		await db.putItem(data);
 	}
 
-	async putQuestion(params: PutItem) {
+	async get(data: AWS.DynamoDB.GetItemInput) {
+		const db = await this.getDatabase();
+		await db.getItem(data)
+	}
+
+	async dbScan(data: AWS.DynamoDB.ScanInput) {
+		const db = await this.getDatabase();
+		await db.scan(data);
+	}
+
+	async putRecord(params: PutItem) {
 		const item = {
 			ID: {
 				S: params.ID
@@ -45,15 +57,15 @@ export default class QuestoSource {
 			}
 		};
 
-		const dynamoItem = {
+		const dynamoPutItem = {
 			Item: item,
 			TableName: process.env.DB_TABLE_NAME
 		};
 
-		await this.put(dynamoItem)
+		await this.put(dynamoPutItem)
 	}
 
-	async getQuestion(params: GetItem) {
+	async getRecord(params: GetItem) {
 		const item = {
 			ID: {
 				S: params.ID
@@ -63,16 +75,20 @@ export default class QuestoSource {
 			}
 		};
 
-		const dynamoItem = {
+		const dynamoGetItem = {
 			Key: item,
 			TableName: process.env.DB_TABLE_NAME
 		};
+
+		await this.get(dynamoGetItem)
 	}
 
 	async scan(params: Scan) {
 		const dynamoScan = {
 			TableName: process.env.DB_TABLE_NAME,
-			ExpressionAttributeValues: params
+			...params
 		};
+
+		await this.dbScan(dynamoScan as AWS.DynamoDB.ScanInput);
 	}
 }

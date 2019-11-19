@@ -4,7 +4,7 @@ import Database from '../../db';
 describe("QuestoSource", () => {
     let putItem: PutItem = { ID: 'USR_1', type: 'QR_QUE_1', params: {}};
     let getItem: GetItem = { ID: 'QUE_1', type: 'AR_ANS_1' };
-    let scan: Scan = { params: {} };
+    let scan: Scan = { ExpressionAttributeValues: {},  ProjectionExpression: '', FilterExpression: ''};
 
     let connectMock;
     let putItemMock;
@@ -43,29 +43,36 @@ describe("QuestoSource", () => {
         expect(db.putItem).toHaveBeenCalled()
     });
 
-    it("putQuestion inserts question to the db", async () => {
-        const expectedDynamoItem = {
+    it("putRecord inserts question to the db", async () => {
+        const expectedPutItem = {
             Item: { ID: { S: putItem.ID }, type: { S: putItem.type }, parameters: { M: putItem.params } },
             TableName: process.env.DB_TABLE_NAME
         };
         questoSource.put = jest.fn();
-        await questoSource.putQuestion(putItem);
+        await questoSource.putRecord(putItem);
 
-        expect(questoSource.put).toHaveBeenCalledWith(expectedDynamoItem);
+        expect(questoSource.put).toHaveBeenCalledWith(expectedPutItem);
     });
 
-    it("putAnswer inserts answer to the db", async () => {
-
-    });
-
-    it("putUser inserts user to the db", async () => {
-
-    });
-
-    it("getQuestion gets the item properly", () => {
-        const expectedDynamoItem = {
+    it("getRecord returns item(s) properly", async () => {
+        const expectedGetItem = {
             Key: { ID: { S: getItem.ID }, type: { S: getItem.type } },
             TableName: process.env.DB_TABLE_NAME
         };
-    })
+        questoSource.get = jest.fn();
+        await questoSource.getRecord(getItem);
+
+        expect(questoSource.get).toHaveBeenCalledWith(expectedGetItem)
+    });
+
+    it("scan returns all requested records properly", async () => {
+        const expectedScanItem = {
+            ...scan,
+            TableName: process.env.DB_TABLE_NAME
+        };
+        questoSource.dbScan = jest.fn();
+        await questoSource.scan(scan);
+
+        expect(questoSource.dbScan).toHaveBeenCalledWith(expectedScanItem);
+    });
 });
