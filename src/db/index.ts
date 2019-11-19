@@ -1,20 +1,5 @@
 import AWS from "aws-sdk";
 
-export interface PutItem {
-	ID: string
-	type: string
-	params: object
-}
-
-export interface GetItem {
-	ID: string
-	type: string
-}
-
-export interface Scan {
-	params: object
-}
-
 export default class Database {
 	private _connection: AWS.DynamoDB;
 	async connect() {
@@ -32,26 +17,9 @@ export default class Database {
 		return this._connection;
 	}
 
-	async putItem(params: PutItem) {
-		const item = {
-			ID: {
-				S: params.ID
-			},
-			type: {
-				S: params.type
-			},
-			parameters: {
-				M: params.params as {}
-			}
-		};
-
-		const dynamoItem = {
-			Item: item,
-			TableName: process.env.DB_TABLE_NAME
-		};
-
+	async putItem(params: AWS.DynamoDB.PutItemInput) {
 		return new Promise((resolve, reject) => {
-			this._connection.putItem(dynamoItem, (err, data) => {
+			this._connection.putItem(params, (err, data) => {
 				if (err) {
 					 reject(err);
 				} else {
@@ -61,23 +29,9 @@ export default class Database {
 		});
 	}
 
-	async getItem(params: GetItem) {
-		const item = {
-			ID: {
-				S: params.ID
-			},
-			type: {
-				S: params.type
-			}
-		};
-
-		const dynamoItem = {
-			Key: item,
-			TableName: process.env.DB_TABLE_NAME
-		};
-
+	async getItem(item: AWS.DynamoDB.GetItemInput) {
 		return new Promise((resolve, reject) => {
-			this._connection.getItem(dynamoItem, (err, data) => {
+			this._connection.getItem(item, (err, data) => {
 				if (err) {
 					reject(err);
 				} else {
@@ -87,14 +41,9 @@ export default class Database {
 		});
 	}
 
-	async scan(params = {}) {
-		const dynamoScan = {
-			TableName: process.env.DB_TABLE_NAME,
-			ExpressionAttributeValues: params
-		};
-
+	async scan(params: AWS.DynamoDB.ScanInput) {
 		return new Promise((resolve, reject) => {
-			this._connection.scan(dynamoScan, (err, data) => {
+			this._connection.scan(params, (err, data) => {
 				if (err) {
 					reject(err);
 				} else {

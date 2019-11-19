@@ -1,7 +1,11 @@
-import QuestoSource from './questo';
+import QuestoSource, { PutItem, GetItem, Scan } from './questo';
 import Database from '../../db';
 
 describe("QuestoSource", () => {
+    let putItem: PutItem = { ID: 'USR_1', type: 'QR_QUE_1', params: {}};
+    let getItem: GetItem = { ID: 'QUE_1', type: 'AR_ANS_1' };
+    let scan: Scan = { params: {} };
+
     let connectMock;
     let putItemMock;
     let getItemMock;
@@ -22,6 +26,8 @@ describe("QuestoSource", () => {
         questoSource = new QuestoSource();
     });
 
+    afterEach(() => jest.restoreAllMocks());
+
     it("getDatabase returns a db connected driver", async () => {
          const db = await questoSource.getDatabase();
 
@@ -38,7 +44,14 @@ describe("QuestoSource", () => {
     });
 
     it("putQuestion inserts question to the db", async () => {
+        const expectedDynamoItem = {
+            Item: { ID: { S: putItem.ID }, type: { S: putItem.type }, parameters: { M: putItem.params } },
+            TableName: process.env.DB_TABLE_NAME
+        };
+        questoSource.put = jest.fn();
+        await questoSource.putQuestion(putItem);
 
+        expect(questoSource.put).toHaveBeenCalledWith(expectedDynamoItem);
     });
 
     it("putAnswer inserts answer to the db", async () => {
@@ -48,4 +61,11 @@ describe("QuestoSource", () => {
     it("putUser inserts user to the db", async () => {
 
     });
+
+    it("getQuestion gets the item properly", () => {
+        const expectedDynamoItem = {
+            Key: { ID: { S: getItem.ID }, type: { S: getItem.type } },
+            TableName: process.env.DB_TABLE_NAME
+        };
+    })
 });
