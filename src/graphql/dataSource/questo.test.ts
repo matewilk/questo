@@ -1,3 +1,5 @@
+import AWS from "aws-sdk";
+
 import QuestoSource, { PutItem, GetItem, Scan } from './questo';
 import Database from '../../db';
 
@@ -37,7 +39,7 @@ describe("QuestoSource", () => {
 
     it("put method inserts item into the database", async () => {
         const db = await questoSource.getDatabase();
-        const item = {};
+        const item = {} as AWS.DynamoDB.PutItemInput;
         await questoSource.put(item);
 
         expect(db.putItem).toHaveBeenCalled()

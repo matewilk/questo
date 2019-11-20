@@ -3,7 +3,8 @@ import AWS from "aws-sdk";
 
 export interface PutItem {
 	ID: string
-	type: string
+	type: string,
+	// text?: string,
 	params: object
 }
 
@@ -31,17 +32,17 @@ export default class QuestoSource {
 
 	async put(data: AWS.DynamoDB.PutItemInput) {
 		const db = await this.getDatabase();
-		await db.putItem(data);
+		return await db.putItem(data);
 	}
 
 	async get(data: AWS.DynamoDB.GetItemInput) {
 		const db = await this.getDatabase();
-		await db.getItem(data)
+		return await db.getItem(data)
 	}
 
 	async dbScan(data: AWS.DynamoDB.ScanInput) {
 		const db = await this.getDatabase();
-		await db.scan(data);
+		return await db.scan(data);
 	}
 
 	async putRecord(params: PutItem) {
@@ -89,6 +90,6 @@ export default class QuestoSource {
 			...params
 		};
 
-		await this.dbScan(dynamoScan as AWS.DynamoDB.ScanInput);
+		return await this.dbScan(dynamoScan as AWS.DynamoDB.ScanInput);
 	}
 }

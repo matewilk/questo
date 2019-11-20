@@ -11,7 +11,7 @@ export default gql`
 		ID: ID!
 		name: String!
 		age: Int!
-    answers: [Answer!]
+    	answers: [Answer!]
 		questions: [Question!]
 	}
 `;

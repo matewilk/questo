@@ -6,10 +6,14 @@ export default gql`
 		question(id: ID!): Question
 	}
 	
-  type Question {
-	  ID: ID!
-    text: String!
-    count: Int!
-	  answers: [Answer!]
-  }
+	extend type Mutation {
+		createQuestion(text: String!): Question!
+	}
+	
+	type Question {
+		ID: ID!
+        type: String!
+#		text: String!
+		answers: [Answer!]
+	}
 `;

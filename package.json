@@ -18,12 +18,15 @@
     "apollo-server": "^2.9.4",
     "aws-sdk": "^2.550.0",
     "dotenv": "^8.1.0",
-    "graphql": "^14.5.8"
+    "graphql": "^14.5.8",
+    "shortid": "^2.2.15"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.6.0",
     "@babel/register": "^7.6.2",
+    "@types/dotenv": "^8.2.0",
     "@types/jest": "^24.0.20",
+    "@types/shortid": "0.0.29",
     "jest": "^24.9.0",
     "nodemon": "^1.19.4",
     "typescript": "^3.6.4"

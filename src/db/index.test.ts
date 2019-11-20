@@ -30,14 +30,14 @@ describe("Database", () => {
 	});
 
 	it("should call putItem successfully", async () => {
-		const item = {};
+		const item = {} as AWS.DynamoDB.PutItemInput;
 		await db.putItem(item);
 
 		expect(connection.putItem).toHaveBeenCalledWith(item, expect.anything());
 	});
 
 	it("should call putItem and reject", async () => {
-		const item = {};
+		const item = {} as AWS.DynamoDB.PutItemInput;
 		connection.putItem.mockImplementation((putItem, callback) => callback('putItem error'));
 
 		await expect(db.putItem(item)).rejects.toMatch('putItem error')
