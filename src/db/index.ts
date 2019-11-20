@@ -1,7 +1,7 @@
 import AWS from "aws-sdk";
 
 export default class Database {
-	private _connection: AWS.DynamoDB;
+	private _connection: AWS.DynamoDB.DocumentClient;
 	async connect() {
 		if (!this._connection){
 			const params = {
@@ -11,15 +11,15 @@ export default class Database {
 				secretAccessKey: process.env.DB_SECRET_ACCESS_KEY
 			};
 
-			this._connection = new AWS.DynamoDB(params);
+			this._connection = new AWS.DynamoDB.DocumentClient(params);
 		}
 
 		return this._connection;
 	}
 
-	async putItem(params: AWS.DynamoDB.PutItemInput) {
+	async putItem(params: AWS.DynamoDB.DocumentClient.Put) {
 		return new Promise((resolve, reject) => {
-			this._connection.putItem(params, (err, data) => {
+			this._connection.put(params, (err, data) => {
 				if (err) {
 					 reject(err);
 				} else {
@@ -29,9 +29,9 @@ export default class Database {
 		});
 	}
 
-	async getItem(item: AWS.DynamoDB.GetItemInput) {
+	async getItem(item: AWS.DynamoDB.DocumentClient.GET) {
 		return new Promise((resolve, reject) => {
-			this._connection.getItem(item, (err, data) => {
+			this._connection.get(item, (err, data) => {
 				if (err) {
 					reject(err);
 				} else {
@@ -41,7 +41,7 @@ export default class Database {
 		});
 	}
 
-	async scan(params: AWS.DynamoDB.ScanInput) {
+	async scan(params: AWS.DynamoDB.DocumentClient.ScanInput) {
 		return new Promise((resolve, reject) => {
 			this._connection.scan(params, (err, data) => {
 				if (err) {

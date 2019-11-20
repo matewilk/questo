@@ -47,7 +47,7 @@ describe("QuestoSource", () => {
 
     it("putRecord inserts question to the db", async () => {
         const expectedPutItem = {
-            Item: { ID: { S: putItem.ID }, type: { S: putItem.type }, parameters: { M: putItem.params } },
+            Item: putItem,
             TableName: process.env.DB_TABLE_NAME
         };
         questoSource.put = jest.fn();
@@ -58,7 +58,7 @@ describe("QuestoSource", () => {
 
     it("getRecord returns item(s) properly", async () => {
         const expectedGetItem = {
-            Key: { ID: { S: getItem.ID }, type: { S: getItem.type } },
+            Key: getItem,
             TableName: process.env.DB_TABLE_NAME
         };
         questoSource.get = jest.fn();

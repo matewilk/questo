@@ -16,12 +16,20 @@ export default {
     Mutation: {
         createQuestion: async (parent, { text }, { dataSources }) => {
             try {
+                const ID = `QUE_${shortid.generate()}`;
                 await dataSources.questoSource.putRecord({
-                    ID: `QUE_${shortid.generate()}`,
+                    ID: `${ID}`,
                     type: '__meta__',
                     // text: text,
                     params: {}
-                })
+                });
+
+                const result = await dataSources.questoSource.getRecord({
+                    ID: `${ID}`,
+                    type: '__meta__'
+                });
+
+                return result.Item;
             } catch (err) {
                 console.log(err);
             }

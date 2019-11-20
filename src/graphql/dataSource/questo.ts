@@ -30,12 +30,12 @@ export default class QuestoSource {
 		return this._db;
 	}
 
-	async put(data: AWS.DynamoDB.PutItemInput) {
+	async put(data: AWS.DynamoDB.DocumentClient.Put) {
 		const db = await this.getDatabase();
 		return await db.putItem(data);
 	}
 
-	async get(data: AWS.DynamoDB.GetItemInput) {
+	async get(data: AWS.DynamoDB.DocumentClient.Get) {
 		const db = await this.getDatabase();
 		return await db.getItem(data)
 	}
@@ -46,42 +46,21 @@ export default class QuestoSource {
 	}
 
 	async putRecord(params: PutItem) {
-		const item = {
-			ID: {
-				S: params.ID
-			},
-			type: {
-				S: params.type
-			},
-			parameters: {
-				M: params.params as {}
-			}
-		};
-
 		const dynamoPutItem = {
-			Item: item,
+			Item: params,
 			TableName: process.env.DB_TABLE_NAME
 		};
 
-		await this.put(dynamoPutItem)
+		return await this.put(dynamoPutItem)
 	}
 
 	async getRecord(params: GetItem) {
-		const item = {
-			ID: {
-				S: params.ID
-			},
-			type: {
-				S: params.type
-			}
-		};
-
 		const dynamoGetItem = {
-			Key: item,
+			Key: params,
 			TableName: process.env.DB_TABLE_NAME
 		};
 
-		await this.get(dynamoGetItem)
+		return await this.get(dynamoGetItem)
 	}
 
 	async scan(params: Scan) {
