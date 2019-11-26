@@ -1,16 +1,23 @@
-import shortid from 'shortid'
+import shortid from "shortid"
 
 export default {
     Query: {
         questions: async (parent, args, { dataSources }) => {
             try {
-                const result = await dataSources.questoSource.scan({});
+                const result = await dataSources.questoSource.scan(args);
                 return result.Items;
             } catch (err) {
                 console.log(err);
             }
         },
-        question: (parent, args) => {}
+        question: async (parent, args, { dataSources }) => {
+            try {
+                const result = await dataSources.questoSource.getRecord(args);
+                return result.Item;
+            } catch (err) {
+                console.log(err);
+            }
+        }
     },
 
     Mutation: {
