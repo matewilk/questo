@@ -3,7 +3,7 @@ import { gql } from "apollo-server";
 export default gql`
 	extend type Query {
 		questions: [Question!]
-		question(id: ID!): Question
+		question(ID: ID!): Question
 	}
 	
 	extend type Mutation {

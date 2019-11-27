@@ -12,7 +12,11 @@ export default {
         },
         question: async (parent, args, { dataSources }) => {
             try {
-                const result = await dataSources.questoSource.getRecord(args);
+                const { ID } = args;
+                const result = await dataSources.questoSource.getRecord({
+                    ID,
+                    type: "__meta__"
+                });
                 return result.Item;
             } catch (err) {
                 console.log(err);
@@ -23,17 +27,17 @@ export default {
     Mutation: {
         createQuestion: async (parent, { text }, { dataSources }) => {
             try {
-                const ID = `QUE_${shortid.generate()}`;
+                const ID = `${process.env.QUESTION_PREFIX}_${shortid.generate()}`;
                 await dataSources.questoSource.putRecord({
                     ID: `${ID}`,
-                    type: '__meta__',
+                    type: "__meta__",
                     // text: text,
                     params: {}
                 });
 
                 const result = await dataSources.questoSource.getRecord({
                     ID: `${ID}`,
-                    type: '__meta__'
+                    type: "__meta__"
                 });
 
                 return result.Item;
