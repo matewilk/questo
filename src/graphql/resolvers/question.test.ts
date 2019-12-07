@@ -32,7 +32,7 @@ describe("Question Resolver", () => {
         });
 
         it("question resolver should call getRecord questoSource method", async () => {
-            const args = { ID: "QUE_123", type: "__meta__" };
+            const args = { ID: "QUE_123", RecordType: "__meta__" };
 
             const result = await Query.question(null, args, dataSourcesMock);
 
@@ -51,10 +51,10 @@ describe("Question Resolver", () => {
             const result = await Mutation.createQuestion(null, args, dataSourcesMock);
 
             expect(dataSourcesMock.dataSources.questoSource.putRecord).toHaveBeenCalledWith({
-                ID: ID, type: "__meta__", params: {}
+                ID: ID, RecordType: "__meta__", text: "question text", params: {}
             });
             expect(dataSourcesMock.dataSources.questoSource.getRecord).toHaveBeenCalledWith({
-                ID: ID, type: "__meta__"
+                ID: ID, RecordType: "__meta__"
             });
             expect(result).toEqual({ test: "getRecord item"});
         });

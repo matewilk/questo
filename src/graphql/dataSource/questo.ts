@@ -3,14 +3,14 @@ import AWS from "aws-sdk";
 
 export interface PutItem {
 	ID: string
-	type: string,
-	// text?: string,
+	RecordType: string,
+	text: string,
 	params: object
 }
 
 export interface GetItem {
 	ID: string
-	type: string
+	RecordType: string
 }
 
 export interface Scan {

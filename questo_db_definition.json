@@ -1,0 +1,125 @@
+{
+  "TableName": "Questo",
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "ID",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "RecordType",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "text",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "score",
+      "AttributeType": "N"
+    },
+    {
+      "AttributeName": "type",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "date",
+      "AttributeType": "S"
+    }
+  ],
+  "KeySchema": [
+    {
+      "AttributeName": "ID",
+      "KeyType": "HASH"
+    },
+    {
+      "AttributeName": "RecordType",
+      "KeyType": "RANGE"
+    }
+  ],
+  "GlobalSecondaryIndexes": [
+    {
+      "IndexName": "TextIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "RecordType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "text",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    },
+    {
+      "IndexName": "ScoreIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "RecordType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "score",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    },
+    {
+      "IndexName": "TypeIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "RecordType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "type",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    },
+    {
+      "IndexName": "DateIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "RecordType",
+          "KeyType": "HASH"
+        },
+        {
+          "AttributeName": "date",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 1,
+    "WriteCapacityUnits": 1
+  }
+}

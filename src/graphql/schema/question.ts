@@ -12,8 +12,8 @@ export default gql`
 	
 	type Question {
 		ID: ID!
-        type: String!
-#		text: String!
+        RecordType: String!
+		text: String!
 		answers: [Answer!]
 	}
 `;
