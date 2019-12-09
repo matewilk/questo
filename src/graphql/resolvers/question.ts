@@ -1,11 +1,21 @@
 import shortid from "shortid"
+import { PutItem } from "../dataSource/questo";
+
+const mapItemToType = (item: PutItem) => ({
+    ID: item.ID,
+    RecordType: item.RecordType,
+    text: item.text,
+    popularity: item.score,
+    category: item.type,
+    date: item.date
+});
 
 export default {
     Query: {
         questions: async (parent, args, { dataSources }) => {
             try {
                 const result = await dataSources.questoSource.scan(args);
-                return result.Items;
+                return result.Items.map(mapItemToType)
             } catch (err) {
                 console.log(err);
             }
@@ -15,9 +25,10 @@ export default {
                 const { ID } = args;
                 const result = await dataSources.questoSource.getRecord({
                     ID,
-                    RecordType: "__meta__"
+                    RecordType: `${process.env.QUESTION_PREFIX}`
                 });
-                return result.Item;
+
+                return mapItemToType(result.Item);
             } catch (err) {
                 console.log(err);
             }
@@ -27,20 +38,24 @@ export default {
     Mutation: {
         createQuestion: async (parent, { text }, { dataSources }) => {
             try {
-                const ID = `${process.env.QUESTION_PREFIX}_${shortid.generate()}`;
+                const QUE = `${process.env.QUESTION_PREFIX}`;
+                const ID = `${QUE}_${shortid.generate()}`;
+
                 await dataSources.questoSource.putRecord({
                     ID: `${ID}`,
-                    RecordType: "__meta__",
+                    RecordType: QUE,
                     text: text,
-                    params: {}
+                    score: 0, // popularity
+                    type: " ", // category
+                    date: Date.now()
                 });
 
                 const result = await dataSources.questoSource.getRecord({
                     ID: `${ID}`,
-                    RecordType: "__meta__"
+                    RecordType: QUE
                 });
 
-                return result.Item;
+                return mapItemToType(result.Item)
             } catch (err) {
                 console.log(err);
             }

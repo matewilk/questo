@@ -23,7 +23,7 @@
     },
     {
       "AttributeName": "date",
-      "AttributeType": "S"
+      "AttributeType": "N"
     }
   ],
   "KeySchema": [

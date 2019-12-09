@@ -5,7 +5,9 @@ export interface PutItem {
 	ID: string
 	RecordType: string,
 	text: string,
-	params: object
+	score: number,
+	type: string,
+	date: number
 }
 
 export interface GetItem {

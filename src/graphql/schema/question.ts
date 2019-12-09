@@ -14,6 +14,9 @@ export default gql`
 		ID: ID!
         RecordType: String!
 		text: String!
+        popularity: Int!
+        category: String!
+        date: String!
 		answers: [Answer!]
 	}
 `;
