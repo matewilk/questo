@@ -1,3 +1,4 @@
-import questionResolver from './question';
+import questionResolver from "./question";
+import answerResolver from "./answer"
 
-export default [questionResolver];
+export default [questionResolver, answerResolver];

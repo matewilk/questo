@@ -1,5 +1,5 @@
 import Database from "../../db";
-import AWS from "aws-sdk";
+import { DynamoDB } from "aws-sdk";
 
 export interface PutItem {
 	ID: string
@@ -32,17 +32,17 @@ export default class QuestoSource {
 		return this._db;
 	}
 
-	async put(data: AWS.DynamoDB.DocumentClient.Put) {
+	async put(data: DynamoDB.DocumentClient.Put) {
 		const db = await this.getDatabase();
 		return await db.putItem(data);
 	}
 
-	async get(data: AWS.DynamoDB.DocumentClient.Get) {
+	async get(data: DynamoDB.DocumentClient.Get) {
 		const db = await this.getDatabase();
 		return await db.getItem(data)
 	}
 
-	async dbScan(data: AWS.DynamoDB.ScanInput) {
+	async dbScan(data: DynamoDB.ScanInput) {
 		const db = await this.getDatabase();
 		return await db.scan(data);
 	}
@@ -62,7 +62,8 @@ export default class QuestoSource {
 			TableName: process.env.DB_TABLE_NAME
 		};
 
-		return await this.get(dynamoGetItem)
+		const result: DynamoDB.GetItemOutput = await this.get(dynamoGetItem);
+		return result.Item;
 	}
 
 	async scan(params: Scan) {
@@ -71,6 +72,7 @@ export default class QuestoSource {
 			...params
 		};
 
-		return await this.dbScan(dynamoScan as AWS.DynamoDB.ScanInput);
+		const result: DynamoDB.ScanOutput = await this.dbScan(dynamoScan as DynamoDB.ScanInput);
+		return result.Items;
 	}
 }

@@ -14,13 +14,12 @@ describe("Question Resolver", () => {
             questoSource: {
                 putRecord: jest.fn(),
                 getRecord: jest.fn().mockImplementation(() => (
-                    { Item: { ID: "QUE_123", RecordType: "QUE", text: "getRecord item", score: 10, type: " ", date: 1575933092219 } }
+                    { ID: "QUE_123", RecordType: "QUE", text: "getRecord item", score: 10, type: " ", date: 1575933092219 }
                 )),
-                scan: jest.fn().mockImplementation(() => (
-                    { Items: [
+                scan: jest.fn().mockImplementation(() => ([
                         { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", score: 20, type: " ", date: 1575933092223 },
                         { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", score: 30, type: " ", date: 1575933095678 }
-                    ]}
+                    ]
                 ))
             }
         }
@@ -99,7 +98,7 @@ describe("Question Resolver", () => {
                 ID: "QUE_123",
                 RecordType: "QUE",
                 category: " ",
-                date: 1575933092219,
+                date: 1575933092219, // date from the mocked result
                 popularity: 10,
             });
         });

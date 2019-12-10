@@ -4,8 +4,15 @@ import QuestoSource, { PutItem, GetItem, Scan } from './questo';
 import Database from '../../db';
 
 describe("QuestoSource", () => {
-    let putItem: PutItem = { ID: 'USR_1', type: 'QR_QUE_1', params: {}};
-    let getItem: GetItem = { ID: 'QUE_1', type: 'AR_ANS_1' };
+    let putItem: PutItem = {
+        ID: 'USR_1',
+        RecordType: 'QR_QUE_1',
+        text: "abcd",
+        score: 0,
+        type: "",
+        date: 1576015896949
+    };
+    let getItem: GetItem = { ID: 'QUE_1', RecordType: 'AR_ANS_1' };
     let scan: Scan = { ExpressionAttributeValues: {},  ProjectionExpression: '', FilterExpression: ''};
 
     let connectMock;
@@ -61,7 +68,7 @@ describe("QuestoSource", () => {
             Key: getItem,
             TableName: process.env.DB_TABLE_NAME
         };
-        questoSource.get = jest.fn();
+        questoSource.get = jest.fn().mockReturnValue(({ Item: {} }));
         await questoSource.getRecord(getItem);
 
         expect(questoSource.get).toHaveBeenCalledWith(expectedGetItem)
@@ -72,7 +79,7 @@ describe("QuestoSource", () => {
             ...scan,
             TableName: process.env.DB_TABLE_NAME
         };
-        questoSource.dbScan = jest.fn();
+        questoSource.dbScan = jest.fn().mockReturnValue(({ Items: [] }));
         await questoSource.scan(scan);
 
         expect(questoSource.dbScan).toHaveBeenCalledWith(expectedScanItem);

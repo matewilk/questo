@@ -14,8 +14,8 @@ export default {
     Query: {
         questions: async (parent, args, { dataSources }) => {
             try {
-                const result = await dataSources.questoSource.scan(args);
-                return result.Items.map(mapItemToType)
+                const results = await dataSources.questoSource.scan(args);
+                return results.map(mapItemToType)
             } catch (err) {
                 console.log(err);
             }
@@ -28,7 +28,7 @@ export default {
                     RecordType: `${process.env.QUESTION_PREFIX}`
                 });
 
-                return mapItemToType(result.Item);
+                return mapItemToType(result);
             } catch (err) {
                 console.log(err);
             }
@@ -42,7 +42,7 @@ export default {
                 const ID = `${QUE}_${shortid.generate()}`;
 
                 await dataSources.questoSource.putRecord({
-                    ID: `${ID}`,
+                    ID,
                     RecordType: QUE,
                     text: text,
                     score: 0, // popularity
@@ -55,7 +55,7 @@ export default {
                     RecordType: QUE
                 });
 
-                return mapItemToType(result.Item)
+                return mapItemToType(result)
             } catch (err) {
                 console.log(err);
             }

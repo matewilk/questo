@@ -29,7 +29,7 @@ export default class Database {
 		});
 	}
 
-	async getItem(item: AWS.DynamoDB.DocumentClient.GET) {
+	async getItem(item: AWS.DynamoDB.DocumentClient.Get) {
 		return new Promise((resolve, reject) => {
 			this._connection.get(item, (err, data) => {
 				if (err) {

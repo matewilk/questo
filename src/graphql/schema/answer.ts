@@ -5,10 +5,18 @@ export default gql`
         answers: [Answer!]
         answer(id: ID!): Answer
     }
+    
+    extend type Mutation {
+        createAnswer(text: String!, score: Int!, type: String!): Answer!
+    }
   
     type Answer {
         ID: ID!
-        value: String!
+        RecrodType: String!
+        answer: String!
+        score: Int!
+        type: String!
+        date: String!
         user: User
     }
 `;
