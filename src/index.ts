@@ -13,26 +13,6 @@ const users = {
 	3: { id: 3, name: 'Ted', age: 21 }
 };
 
-// const questions = {
-// 	1: { id: 1, text: 'How old are you?' },
-// 	2: { id: 2, text: 'What is your favorite colour?' },
-// 	3: { id: 3, text: 'What is your name?' }
-// };
-//
-// const answers = {
-// 	1: { value: '23', user: users[1], question: questions[0] },
-// 	2: { value: 'blue', user: users[1], question: questions[1] },
-// 	3: { value: 'Jane', user: users[1], question: questions[2] },
-//
-// 	4: { value: '55', user: users[0], question: questions[0] },
-// 	5: { value: 'red', user: users[0], question: questions[1] },
-// 	6: { value: 'Rob', user: users[0], question: questions[2] },
-//
-// 	7: { value: '21', user: users[2], question: questions[0] },
-// 	8: { value: 'pink', user: users[2], question: questions[1] },
-// 	9: { value: 'Ted', user: users[2], question: questions[2] },
-// };
-
 /**
 
  types: question, question:answer, question:user

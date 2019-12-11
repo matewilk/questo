@@ -59,6 +59,39 @@ export default {
             } catch (err) {
                 console.log(err);
             }
+        },
+        answerQuestion: async (parent, { QUE_ID, text, score, type }, { dataSources }) => {
+            try {
+                const ANS = `${process.env.ANSWER_PREFIX}`;
+                const ANS_ID = `${ANS}_${shortid.generate()}`;
+                const currentDate = Date.now();
+
+                await dataSources.questoSource.putRecord({
+                    ID: ANS_ID,
+                    RecordType: ANS,
+                    text,
+                    score,
+                    type,
+                    date: currentDate
+                });
+
+                const answerRecordType = `AR_${ANS_ID}`;
+                await dataSources.questoSource.putRecord({
+                    ID: QUE_ID,
+                    RecordType: answerRecordType,
+                    text,
+                    score,
+                    type,
+                    date: currentDate
+                });
+
+                return await dataSources.questoSource.getRecord({
+                    ID: QUE_ID,
+                    RecordType: answerRecordType
+                });
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 }
