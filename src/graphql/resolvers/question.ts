@@ -36,7 +36,7 @@ export default {
     },
 
     Mutation: {
-        createQuestion: async (parent, { text }, { dataSources }) => {
+        createQuestion: async (parent, { text, popularity, category }, { dataSources }) => {
             try {
                 const QUE = `${process.env.QUESTION_PREFIX}`;
                 const ID = `${QUE}_${shortid.generate()}`;
@@ -45,8 +45,8 @@ export default {
                     ID,
                     RecordType: QUE,
                     text: text,
-                    score: 0, // popularity
-                    type: " ", // category
+                    score: popularity, // popularity
+                    type: category, // category
                     date: Date.now()
                 });
 

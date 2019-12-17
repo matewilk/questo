@@ -7,7 +7,7 @@ export default gql`
 	}
 	
 	extend type Mutation {
-		createQuestion(text: String!): Question!
+		createQuestion(text: String!, popularity: Int!, category: String!): Question!
 		answerQuestion(QUE_ID: ID!, text: String!, score: Int!, type: String!): Question!
 	}
 	
