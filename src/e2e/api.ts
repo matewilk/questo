@@ -18,3 +18,20 @@ export const createQuestion = async (variables: {text: string, popularity: numbe
         `,
         variables
     });
+
+export const question = async (variables: { ID: string }) =>
+    await axios.post(API_URL, {
+        query: `
+            query ($ID: ID!) {
+                question(ID: $ID) {
+                    ID
+                    RecordType
+                    text
+                    popularity
+                    category
+                    date
+                }
+            }
+        `,
+        variables
+    });
