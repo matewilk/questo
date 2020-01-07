@@ -2,7 +2,9 @@ import axios from "axios";
 
 const API_URL = process.env.API_URL;
 
-export const createQuestion = async (variables: {text: string, popularity: number, category: string}) =>
+export const createQuestion = async (variables: {
+    text: string, popularity: number, category: string
+}) =>
     await axios.post(API_URL, {
         query: `
             mutation ($text: String!, $popularity: Int!, $category: String!) {
@@ -19,7 +21,9 @@ export const createQuestion = async (variables: {text: string, popularity: numbe
         variables
     });
 
-export const question = async (variables: { ID: string }) =>
+export const question = async (variables: {
+    ID: string
+}) =>
     await axios.post(API_URL, {
         query: `
             query ($ID: ID!) {
@@ -35,3 +39,24 @@ export const question = async (variables: { ID: string }) =>
         `,
         variables
     });
+
+export const answerQuestion = async (variables: {
+    QUE_ID: string, text: string, score: number, type: string
+}) =>
+    await axios.post(API_URL, {
+        query: `
+            mutation ($QUE_ID: ID!, $text: String!, $score: Int!, $type: String!) {
+                answerQuestion(QUE_ID: $QUE_ID, text: $text, score: $score, type: $type) {
+                    ID
+                    RecordType
+                    text
+                    date
+                    popularity
+                    category
+                }
+            }
+        `,
+        variables
+    });
+
+

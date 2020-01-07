@@ -85,10 +85,12 @@ export default {
                     date: currentDate
                 });
 
-                return await dataSources.questoSource.getRecord({
+                const result = await dataSources.questoSource.getRecord({
                     ID: QUE_ID,
                     RecordType: answerRecordType
                 });
+
+                return mapItemToType(result);
             } catch (err) {
                 console.log(err);
             }

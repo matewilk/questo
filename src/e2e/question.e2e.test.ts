@@ -1,4 +1,8 @@
-import { createQuestion, question } from "./api";
+import {
+    answerQuestion,
+    createQuestion,
+    question
+} from "./api";
 
 const createTestQuestion = async (text: string, popularity: number, category: string) => {
     const params = {
@@ -42,5 +46,34 @@ describe("Question", () => {
 
             expect(data.data.question).toEqual(createdQuestion);
         });
-    })
+    });
+
+    describe("answerQuestion(QUE_ID: String!, text: String!, score: Int!, type: String!): Question", () => {
+        it("answers a specific question and returns Question's answer record", async () => {
+            const question = "What is your hair colour?";
+            const popularity = 200000;
+            const category = "test";
+
+            const createdQuestion = await createTestQuestion(question, popularity, category);
+
+            const answer = "blond";
+            const score = 10000;
+            const type = "text";
+            const { data } = await answerQuestion({
+                QUE_ID: createdQuestion.ID,
+                text: answer,
+                score,
+                type
+            });
+
+            expect(data.data.answerQuestion).toEqual({
+                ID: expect.any(String), // regex QUE_*
+                RecordType: expect.any(String), // fix it with regex AR_ANS_*
+                text: answer,
+                popularity: score,
+                category: type,
+                date: expect.any(String), // timestamp regex ?
+            })
+        });
+    });
 });
