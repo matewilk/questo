@@ -1,12 +1,14 @@
 # IDEs
 .idea/
 
+# dotenv
+.env
+
 # node
 node_modules
 
 # infrastructure
 **/**/.terraform
-
 
 # build
 build
