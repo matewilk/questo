@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 
 export default gql`
     extend type Query {
-        answers: [Answer!]
+        answers(QUE_ID: ID!): [Answer!]
         answer(id: ID!): Answer
     }
     
@@ -12,7 +12,7 @@ export default gql`
   
     type Answer {
         ID: ID!
-        RecrodType: String!
+        RecordType: String!
         answer: String!
         score: Int!
         type: String!

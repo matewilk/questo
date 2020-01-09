@@ -2,17 +2,8 @@ import {
     answerQuestion,
     createQuestion,
     question
-} from "./api";
-
-const createTestQuestion = async (text: string, popularity: number, category: string) => {
-    const params = {
-        text: text,
-        popularity: popularity,
-        category: category
-    };
-    const { data } = await createQuestion(params);
-    return data.data.createQuestion;
-};
+} from "./question.api";
+import { createTestQuestion } from "./helpers";
 
 describe("Question", () => {
     describe("createQuestion(text: String!, popularity: Int!, category: String!): Question", () => {
@@ -21,7 +12,8 @@ describe("Question", () => {
             const popularity = 10;
             const category = "test";
 
-            const question = await createTestQuestion(text, popularity, category);
+            const { data } = await createQuestion({text, popularity, category});
+            const question = data.data.createQuestion;
 
             expect(question).toEqual({
                 text,

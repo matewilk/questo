@@ -16,7 +16,7 @@ describe("Question Resolver", () => {
                 getRecord: jest.fn().mockImplementation(() => (
                     { ID: "QUE_123", RecordType: "QUE", text: "getRecord item", score: 10, type: "politics", date: 1575933092219 }
                 )),
-                scan: jest.fn().mockImplementation(() => ([
+                query: jest.fn().mockImplementation(() => ([
                         { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", score: 20, type: "sport", date: 1575933092223 },
                         { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", score: 30, type: "news", date: 1575933095678 }
                     ]
@@ -35,7 +35,7 @@ describe("Question Resolver", () => {
 
             const result = await Query.questions(null, args, dataSourcesMock);
 
-            expect(dataSourcesMock.dataSources.questoSource.scan).toHaveBeenCalledWith(args);
+            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(args);
             expect(result).toEqual([
                 { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", popularity: 20, category: "sport", date: 1575933092223 },
                 { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", popularity: 30, category: "news", date: 1575933095678 }
@@ -77,7 +77,7 @@ describe("Question Resolver", () => {
 
         describe("createQuestion", () => {
             it("should create and immediately get and return question record", async () => {
-                const args = { text: "question text" };
+                const args = { text: "question text", popularity: 10, category: "test" };
                 const ID = "QUE_987654321";
 
                 const result = await Mutation.createQuestion(null, args, dataSourcesMock);
@@ -86,8 +86,8 @@ describe("Question Resolver", () => {
                     ID: ID,
                     RecordType: `${process.env.QUESTION_PREFIX}`,
                     text: "question text",
-                    score: 0,
-                    type: " ",
+                    score: 10,
+                    type: "test",
                     date: fakeDateNow
                 });
                 expect(dataSourcesMock.dataSources.questoSource.getRecord).toHaveBeenCalledWith({
@@ -175,8 +175,8 @@ describe("Question Resolver", () => {
                    ID: "QUE_123",
                    RecordType: "AR_ANS_987654321",
                    text: "answer to question",
-                   score: 50,
-                   type: "boolean",
+                   popularity: 50,
+                   category: "boolean",
                    date: 1575933092219
                });
            })

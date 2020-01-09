@@ -41,9 +41,9 @@ export default class Database {
 		});
 	}
 
-	async scan(params: AWS.DynamoDB.DocumentClient.ScanInput) {
+	async query(params: AWS.DynamoDB.DocumentClient.ScanInput) {
 		return new Promise((resolve, reject) => {
-			this._connection.scan(params, (err, data) => {
+			this._connection.query(params, (err, data) => {
 				if (err) {
 					reject(err);
 				} else {

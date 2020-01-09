@@ -7,7 +7,7 @@ jest.mock("aws-sdk", () => {
 			DocumentClient: jest.fn(() => ({
 				put: jest.fn().mockImplementation((params, callback) => callback(null, 'test')),
 				get: jest.fn().mockImplementation((params, callback) => callback(null, 'test')),
-				scan: jest.fn().mockImplementation((params, callback) => callback(null, 'test'))
+				query: jest.fn().mockImplementation((params, callback) => callback(null, 'test'))
 			}))
 		}
 	}
@@ -59,17 +59,17 @@ describe("Database", () => {
 		await expect(db.getItem(item)).rejects.toMatch('getItem error')
 	});
 
-	it("should call scan successfully", async () => {
-		const params = {} as AWS.DynamoDB.DocumentClient.ScanInput;
-		await db.scan(params);
+	it("should call query successfully", async () => {
+		const params = {} as AWS.DynamoDB.DocumentClient.QueryInput;
+		await db.query(params);
 
-		expect(connection.scan).toHaveBeenCalledWith(params, expect.anything());
+		expect(connection.query).toHaveBeenCalledWith(params, expect.anything());
 	});
 
-	it("should call scan and reject", async () => {
-		connection.scan.mockImplementation((param, callback) => callback('scan error'));
-		const params = {} as AWS.DynamoDB.ScanInput;
+	it("should call query and reject", async () => {
+		connection.query.mockImplementation((param, callback) => callback('query error'));
+		const params = {} as AWS.DynamoDB.QueryInput;
 
-		await expect(db.scan(params)).rejects.toMatch('scan error')
+		await expect(db.query(params)).rejects.toMatch('query error')
 	});
 });

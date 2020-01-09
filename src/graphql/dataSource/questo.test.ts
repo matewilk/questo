@@ -1,6 +1,6 @@
 import AWS from "aws-sdk";
 
-import QuestoSource, { PutItem, GetItem, Scan } from './questo';
+import QuestoSource, { PutItem, GetItem, Query } from './questo';
 import Database from '../../db';
 
 describe("QuestoSource", () => {
@@ -13,38 +13,38 @@ describe("QuestoSource", () => {
         date: 1576015896949
     };
     let getItem: GetItem = { ID: 'QUE_1', RecordType: 'AR_ANS_1' };
-    let scan: Scan = { ExpressionAttributeValues: {},  ProjectionExpression: '', FilterExpression: ''};
+    let query: Query = { KeyConditionExpression: '',  ExpressionAttributeNames: {}, ExpressionAttributeValues: {} };
 
     let connectMock;
     let putItemMock;
     let getItemMock;
-    let scanMock;
+    let queryMock;
     let questoSource: QuestoSource;
 
     beforeEach(() => {
         connectMock = jest.fn();
         putItemMock = jest.fn();
         getItemMock = jest.fn();
-        scanMock = jest.fn();
+        queryMock = jest.fn();
 
         Database.prototype.connect = connectMock;
         Database.prototype.putItem = putItemMock;
         Database.prototype.getItem = getItemMock;
-        Database.prototype.scan = scanMock;
+        Database.prototype.query = queryMock;
 
         questoSource = new QuestoSource();
     });
 
     afterEach(() => jest.restoreAllMocks());
 
-    it("getDatabase returns a db connected driver", async () => {
+    it("getDatabase method returns a db connected driver", async () => {
          const db = await questoSource.getDatabase();
 
          expect(db.connect).toHaveBeenCalled();
          expect(db).toBeInstanceOf(Database);
     });
 
-    it("put method inserts item into the database", async () => {
+    it("put method gets appropriate params & inserts item into the database", async () => {
         const db = await questoSource.getDatabase();
         const item = {} as AWS.DynamoDB.PutItemInput;
         await questoSource.put(item);
@@ -52,7 +52,7 @@ describe("QuestoSource", () => {
         expect(db.putItem).toHaveBeenCalled()
     });
 
-    it("putRecord inserts question to the db", async () => {
+    it("putRecord gets appropriate params & inserts record to the db", async () => {
         const expectedPutItem = {
             Item: putItem,
             TableName: process.env.DB_TABLE_NAME
@@ -63,7 +63,7 @@ describe("QuestoSource", () => {
         expect(questoSource.put).toHaveBeenCalledWith(expectedPutItem);
     });
 
-    it("getRecord returns item(s) properly", async () => {
+    it("getRecord gets appropriate params & returns item(s) properly", async () => {
         const expectedGetItem = {
             Key: getItem,
             TableName: process.env.DB_TABLE_NAME
@@ -74,14 +74,14 @@ describe("QuestoSource", () => {
         expect(questoSource.get).toHaveBeenCalledWith(expectedGetItem)
     });
 
-    it("scan returns all requested records properly", async () => {
+    it("query method gets appropriate params & returns all requested records properly", async () => {
         const expectedScanItem = {
-            ...scan,
+            ...query,
             TableName: process.env.DB_TABLE_NAME
         };
-        questoSource.dbScan = jest.fn().mockReturnValue(({ Items: [] }));
-        await questoSource.scan(scan);
+        questoSource.dbQuery = jest.fn().mockReturnValue(({ Items: [] }));
+        await questoSource.query(query);
 
-        expect(questoSource.dbScan).toHaveBeenCalledWith(expectedScanItem);
+        expect(questoSource.dbQuery).toHaveBeenCalledWith(expectedScanItem);
     });
 });

@@ -14,7 +14,7 @@ export default {
     Query: {
         questions: async (parent, args, { dataSources }) => {
             try {
-                const results = await dataSources.questoSource.scan(args);
+                const results = await dataSources.questoSource.query(args);
                 return results.map(mapItemToType)
             } catch (err) {
                 console.log(err);

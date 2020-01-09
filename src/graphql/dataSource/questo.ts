@@ -15,10 +15,10 @@ export interface GetItem {
 	RecordType: string
 }
 
-export interface Scan {
+export interface Query {
+	KeyConditionExpression: string
+	ExpressionAttributeNames?: object
 	ExpressionAttributeValues?: object
-	ProjectionExpression?: string
-	FilterExpression?: string
 }
 
 export default class QuestoSource {
@@ -42,9 +42,9 @@ export default class QuestoSource {
 		return await db.getItem(data)
 	}
 
-	async dbScan(data: DynamoDB.ScanInput) {
+	async dbQuery(data: DynamoDB.QueryInput) {
 		const db = await this.getDatabase();
-		return await db.scan(data);
+		return await db.query(data);
 	}
 
 	async putRecord(params: PutItem) {
@@ -66,13 +66,13 @@ export default class QuestoSource {
 		return result.Item;
 	}
 
-	async scan(params: Scan) {
+	async query(params: Query) {
 		const dynamoScan = {
 			TableName: process.env.DB_TABLE_NAME,
 			...params
 		};
 
-		const result: DynamoDB.ScanOutput = await this.dbScan(dynamoScan as DynamoDB.ScanInput);
+		const result: DynamoDB.ScanOutput = await this.dbQuery(dynamoScan as DynamoDB.QueryInput);
 		return result.Items;
 	}
 }

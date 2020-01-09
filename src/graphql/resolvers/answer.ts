@@ -11,6 +11,24 @@ const mapItemToType = (item: PutItem) => ({
 });
 
 export default {
+    Query: {
+        answers: async (parent, { QUE_ID }, { dataSources }) => {
+            try {
+                const args = {
+                    KeyConditionExpression: "ID=:id and begins_with(RecordType, :rtype)",
+                    ExpressionAttributeValues: {
+                        ":id": QUE_ID,
+                        ":rtype": "AR_ANS"
+                    }
+                };
+
+                const result = await dataSources.questoSource.query(args);
+                return result.map(mapItemToType);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    },
     Mutation: {
         createAnswer: async (parent, { text, score, type }, { dataSources }) => {
             try {

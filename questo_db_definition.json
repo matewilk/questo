@@ -38,6 +38,22 @@
   ],
   "GlobalSecondaryIndexes": [
     {
+      "IndexName": "EntitiesIndex",
+      "KeySchema": [
+        {
+          "AttributeName": "RecordType",
+          "KeyType": "HASH"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      },
+      "ProvisionedThroughput": {
+        "ReadCapacityUnits": 1,
+        "WriteCapacityUnits": 1
+      }
+    },
+    {
       "IndexName": "TextIndex",
       "KeySchema": [
         {
