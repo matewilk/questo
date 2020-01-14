@@ -16,10 +16,14 @@ describe("Question Resolver", () => {
                 getRecord: jest.fn().mockImplementation(() => (
                     { ID: "QUE_123", RecordType: "QUE", text: "getRecord item", score: 10, type: "politics", date: 1575933092219 }
                 )),
-                query: jest.fn().mockImplementation(() => ([
-                        { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", score: 20, type: "sport", date: 1575933092223 },
-                        { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", score: 30, type: "news", date: 1575933095678 }
-                    ]
+                query: jest.fn().mockImplementation(() => ({
+                        Items: [
+                            { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", score: 20, type: "sport", date: 1575933092223 },
+                            { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", score: 30, type: "news", date: 1575933095678 }
+                        ],
+                        LastEvaluatedKey: { ID: "QUE_987", RecordType: "QUE" },
+                        Count: 2
+                    }
                 ))
             }
         }
@@ -30,19 +34,59 @@ describe("Question Resolver", () => {
     describe("Query", () => {
         const { Query } = questionResolver;
 
-        it("questions resolver should call scan questoSource method", async () => {
-            const args = {};
+        it("questions resolver should call query questoSource method with appropriate params", async () => {
+            const args = { cursor: null, limit: null };
+            const queryArgsExpectation = {
+                IndexName: "EntitiesIndex",
+                KeyConditionExpression: "RecordType=:rtype",
+                ExpressionAttributeValues: {
+                    ":rtype": "QUE"
+                },
+                Limit: 10,
+                ExclusiveStartKey: null
+            };
+
+            await Query.questions(null, args, dataSourcesMock);
+
+            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(queryArgsExpectation);
+        });
+
+        it("questions resolver should call query questoSource method with params allowing pagination", async () => {
+            const LastEvaluatedKey = {
+                ID: "QUE_987" /* ID of last record returned by previous query */,
+                RecordType: "QUE"
+            };
+            const args = { cursor: "eyJJRCI6IlFVRV85ODciLCJSZWNvcmRUeXBlIjoiUVVFIn0=", limit: 15 }; // cursor after encoding: {"ID": "QUE_987", "RecordType": "QUE"}
+            const queryArgsExpectation = {
+                IndexName: "EntitiesIndex",
+                KeyConditionExpression: "RecordType=:rtype",
+                ExpressionAttributeValues: {
+                    ":rtype": "QUE"
+                },
+                Limit: 15,
+                ExclusiveStartKey: LastEvaluatedKey
+            };
+
+            await Query.questions(null, args, dataSourcesMock);
+
+            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(queryArgsExpectation);
+        });
+
+        it("questions resolver should return results object with 'items' and 'pageInfo' properties", async () => {
+            const args = { cursor: null, limit: null };
 
             const result = await Query.questions(null, args, dataSourcesMock);
 
-            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(args);
-            expect(result).toEqual([
-                { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", popularity: 20, category: "sport", date: 1575933092223 },
-                { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", popularity: 30, category: "news", date: 1575933095678 }
-            ]);
+            expect(result).toEqual({
+                items: [
+                    { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", popularity: 20, category: "sport", date: 1575933092223 },
+                    { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", popularity: 30, category: "news", date: 1575933095678 }
+                ],
+                pageInfo: { cursor: "eyJJRCI6IlFVRV85ODciLCJSZWNvcmRUeXBlIjoiUVVFIn0=", count: 2 },
+            });
         });
 
-        it("question resolver should call getRecord questoSource method", async () => {
+        it("question resolver should call getRecord questoSource method and return question record", async () => {
             const args = { ID: "QUE_123", RecordType: `${process.env.QUESTION_PREFIX}` };
 
             const result = await Query.question(null, args, dataSourcesMock);

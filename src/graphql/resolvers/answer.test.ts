@@ -53,12 +53,11 @@ describe("Answer Resolver", () => {
 
             const result = await Query.answers(null, args, dataSourcesMock);
 
+            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(queryArgsExpectation);
             expect(result).toEqual([
                 { ID: "QUE_123", RecordType: "AR_ANS_1", answer: "test answer 1", score: 10, type: "test type", date: 1578586873397 },
                 { ID: "QUE_123", RecordType: "AR_ANS_2", answer: "test answer 2", score: 10, type: "test type", date: 1578586894013 }
             ]);
-
-            expect(dataSourcesMock.dataSources.questoSource.query).toHaveBeenCalledWith(queryArgsExpectation);
         });
     });
 

@@ -10,12 +10,32 @@ const mapItemToType = (item: PutItem) => ({
     date: item.date
 });
 
+const toCursorHash = (string: string): string => Buffer.from(string).toString("base64");
+
+const fromCursorHash = (string: string): string => Buffer.from(string, "base64").toString("ascii");
+
 export default {
     Query: {
-        questions: async (parent, args, { dataSources }) => {
+        questions: async (parent, { cursor, limit }, { dataSources }) => {
             try {
+                const args = {
+                    IndexName: "EntitiesIndex",
+                    KeyConditionExpression: "RecordType=:rtype",
+                    ExpressionAttributeValues: {
+                        ":rtype": process.env.QUESTION_PREFIX
+                    },
+                    Limit: limit ? limit : 10,
+                    ExclusiveStartKey: cursor ? JSON.parse(fromCursorHash(cursor)) : null
+                };
+
                 const results = await dataSources.questoSource.query(args);
-                return results.map(mapItemToType)
+                return {
+                    items: results.Items.map(mapItemToType),
+                    pageInfo: {
+                        count: results.Count,
+                        cursor: results.LastEvaluatedKey ? toCursorHash(JSON.stringify(results.LastEvaluatedKey)) : null
+                    }
+                }
             } catch (err) {
                 console.log(err);
             }

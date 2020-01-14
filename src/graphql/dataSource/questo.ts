@@ -18,7 +18,9 @@ export interface GetItem {
 export interface Query {
 	KeyConditionExpression: string
 	ExpressionAttributeNames?: object
-	ExpressionAttributeValues?: object
+	ExpressionAttributeValues: object
+	Limit?: string
+	LastEvaluatedKey?: object
 }
 
 export default class QuestoSource {
@@ -72,7 +74,7 @@ export default class QuestoSource {
 			...params
 		};
 
-		const result: DynamoDB.ScanOutput = await this.dbQuery(dynamoScan as DynamoDB.QueryInput);
-		return result.Items;
+		const result: DynamoDB.QueryOutput = await this.dbQuery(dynamoScan as DynamoDB.QueryInput);
+		return result;
 	}
 }
