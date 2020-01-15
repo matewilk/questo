@@ -59,4 +59,29 @@ export const answerQuestion = async (variables: {
         variables
     });
 
+export const questions = async (variables: {
+    cursor?: string, limit?: number
+}) =>
+    await axios.post(API_URL, {
+        query: `
+            query ($cursor: String, $limit: Int) {
+                questions (cursor: $cursor, limit: $limit) {
+                    items {
+                        ID
+                        RecordType
+                        text
+                        popularity
+                        category
+                        date
+                    }
+                    pageInfo {
+                        cursor
+                        count
+                    }
+                }
+            }
+        `,
+        variables
+    });
+
 

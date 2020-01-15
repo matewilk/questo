@@ -1,7 +1,8 @@
 import {
     answerQuestion,
     createQuestion,
-    question
+    question,
+    questions
 } from "./question.api";
 import { createTestQuestion } from "./helpers";
 
@@ -68,4 +69,48 @@ describe("Question", () => {
             })
         });
     });
+
+    describe("questions(cursor: String, limit: Int): Questions!", () => {
+        it("returns list of questions as items and pageInfo", async () => {
+            const { data } = await questions();
+
+            expect(data.data.questions).toHaveProperty('items');
+            expect(data.data.questions).toHaveProperty('pageInfo');
+            expect(data.data.questions.items.length).toBeGreaterThanOrEqual(4);
+            expect(data.data.questions.pageInfo).toHaveProperty('cursor');
+            expect(data.data.questions.pageInfo).toHaveProperty('count');
+        });
+
+        it("returns limited number of items and cursor when limit is set", async () => {
+            const { data } = await questions({ limit: 1 });
+
+            expect(data.data.questions.items.length).toEqual(1);
+            expect(data.data.questions.pageInfo)
+                .toHaveProperty(
+                    'cursor',
+                    expect.stringMatching(/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/) // base64 str
+                );
+            expect(data.data.questions.pageInfo).toHaveProperty('count', 1);
+        });
+
+        it("returns items with offset when cursor is set", async () => {
+            const questionFirst = await questions({ limit: 1 });
+            const questionSecond = await questions({ limit: 2 });
+
+            const { data } = await questions({
+                limit: 1,
+                cursor: questionFirst.data.data.questions.pageInfo.cursor
+            });
+
+            expect(questionSecond.data.data.questions.items[1]).toEqual(
+                data.data.questions.items[0]
+            )
+        });
+
+        it("returns no cursor value when items array size is smaller than limit", async () => {
+            const { data } = await questions({ limit: 100000 });
+
+            expect(data.data.questions.pageInfo.cursor).toEqual(null);
+        })
+    })
 });

@@ -2,7 +2,7 @@ import { gql } from "apollo-server";
 
 export default gql`	
 	extend type Query {
-		questions (limit: Int, cursor: String): Questions!
+		questions (cursor: String, limit: Int): Questions!
 		question (ID: ID!): Question
 	}
 	
@@ -12,7 +12,7 @@ export default gql`
 	}
 	
 	type PageInfo {
-		count: String!
+		count: Int
 		cursor: String
 	}
 	
