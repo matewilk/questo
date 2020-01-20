@@ -23,7 +23,7 @@ export default {
                 };
 
                 const result = await dataSources.questoSource.query(args);
-                return result.map(mapItemToType);
+                return result.Items.map(mapItemToType);
             } catch (err) {
                 console.log(err);
             }
