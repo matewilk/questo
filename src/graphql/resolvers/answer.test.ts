@@ -28,12 +28,12 @@ describe("Answer Resolver", () => {
                 getRecord: jest.fn().mockImplementation(() => (
                     { ID: "ANS_123456789", RecordType: "ANS", text: "getRecord item", score: 20, type: "boolean", date: 1575933092219 }
                 )),
-                query: jest.fn().mockImplementation(() => (
-                    [
+                query: jest.fn().mockImplementation(() => ({
+                    Items: [
                         { ID: "QUE_123", RecordType: "AR_ANS_1", text: "test answer 1", score: 10, type: "test type", date: 1578586873397 },
                         { ID: "QUE_123", RecordType: "AR_ANS_2", text: "test answer 2", score: 10, type: "test type", date: 1578586894013 }
                     ]
-                ))
+                }))
             }
         }
     };
