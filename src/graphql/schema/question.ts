@@ -17,7 +17,7 @@ export default gql`
 	}
 	
 	type Questions {
-		items: [Question!]
+		edges: [Question!]
 		pageInfo: PageInfo
 	}
 	

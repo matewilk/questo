@@ -66,7 +66,7 @@ export const questions = async (variables: {
         query: `
             query ($cursor: String, $limit: Int) {
                 questions (cursor: $cursor, limit: $limit) {
-                    items {
+                    edges {
                         ID
                         RecordType
                         text

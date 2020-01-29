@@ -78,11 +78,11 @@ describe("Question Resolver", () => {
             const result = await Query.questions(null, args, dataSourcesMock);
 
             expect(result).toEqual({
-                items: [
+                edges: [
                     { ID: "QUE_123", RecordType: "QUE", text: "scan item 1", popularity: 20, category: "sport", date: 1575933092223 },
                     { ID: "QUE_987", RecordType: "QUE", text: "scan item 2", popularity: 30, category: "news", date: 1575933095678 }
                 ],
-                pageInfo: { cursor: "eyJJRCI6IlFVRV85ODciLCJSZWNvcmRUeXBlIjoiUVVFIn0=", count: 2 },
+                pageInfo: { cursor: "eyJJRCI6IlFVRV85ODciLCJSZWNvcmRUeXBlIjoiUVVFIn0=", count: 2, hasNextPage: true },
             });
         });
 

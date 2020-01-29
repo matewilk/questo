@@ -29,9 +29,14 @@ export default {
                 };
 
                 const results = await dataSources.questoSource.query(args);
+
+                const questions = results.Items;
+                const hasNextPage = questions.length > limit;
+
                 return {
-                    items: results.Items.map(mapItemToType),
+                    edges: questions.map(mapItemToType),
                     pageInfo: {
+                        hasNextPage,
                         count: results.Count,
                         cursor: results.LastEvaluatedKey ? toCursorHash(JSON.stringify(results.LastEvaluatedKey)) : null
                     }

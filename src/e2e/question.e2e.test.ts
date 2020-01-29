@@ -71,12 +71,12 @@ describe("Question", () => {
     });
 
     describe("questions(cursor: String, limit: Int): Questions!", () => {
-        it("returns list of questions as items and pageInfo", async () => {
+        it("returns list of questions as edges and pageInfo", async () => {
             const { data } = await questions();
 
-            expect(data.data.questions).toHaveProperty('items');
+            expect(data.data.questions).toHaveProperty('edges');
             expect(data.data.questions).toHaveProperty('pageInfo');
-            expect(data.data.questions.items.length).toBeGreaterThanOrEqual(4);
+            expect(data.data.questions.edges.length).toBeGreaterThanOrEqual(4);
             expect(data.data.questions.pageInfo).toHaveProperty('cursor');
             expect(data.data.questions.pageInfo).toHaveProperty('count');
         });
@@ -84,7 +84,7 @@ describe("Question", () => {
         it("returns limited number of items and cursor when limit is set", async () => {
             const { data } = await questions({ limit: 1 });
 
-            expect(data.data.questions.items.length).toEqual(1);
+            expect(data.data.questions.edges.length).toEqual(1);
             expect(data.data.questions.pageInfo)
                 .toHaveProperty(
                     'cursor',
@@ -102,8 +102,8 @@ describe("Question", () => {
                 cursor: questionFirst.data.data.questions.pageInfo.cursor
             });
 
-            expect(questionSecond.data.data.questions.items[1]).toEqual(
-                data.data.questions.items[0]
+            expect(questionSecond.data.data.questions.edges[1]).toEqual(
+                data.data.questions.edges[0]
             )
         });
 
