@@ -13,7 +13,9 @@ describe("Question", () => {
             const popularity = 10;
             const category = "test";
 
-            const { data } = await createQuestion({text, popularity, category});
+            const input = { input: { text, popularity, category }};
+
+            const { data } = await createQuestion(input);
             const question = data.data.createQuestion;
 
             expect(question).toEqual({

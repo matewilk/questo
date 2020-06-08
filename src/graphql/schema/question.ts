@@ -6,8 +6,14 @@ export default gql`
 		question (ID: ID!): Question
 	}
 	
+	input CreateQuestionInput {
+		text: String!
+		popularity: Int!
+		category: String!
+	}
+	
 	extend type Mutation {
-		createQuestion(text: String!, popularity: Int!, category: String!): Question!
+		createQuestion(input: CreateQuestionInput): Question!
 		answerQuestion(QUE_ID: ID!, text: String!, score: Int!, type: String!): Question!
 	}
 	

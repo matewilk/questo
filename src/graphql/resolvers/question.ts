@@ -61,7 +61,7 @@ export default {
     },
 
     Mutation: {
-        createQuestion: async (parent, { text, popularity, category }, { dataSources }) => {
+        createQuestion: async (parent, { input: { text, popularity, category } }, { dataSources }) => {
             try {
                 const QUE = `${process.env.QUESTION_PREFIX}`;
                 const ID = `${QUE}_${shortid.generate()}`;
