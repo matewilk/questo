@@ -2,22 +2,20 @@ import { gql } from "apollo-server";
 
 import userSchema from "./user";
 import answerSchema from "./answer";
-import questionSchema from "./question"
+import questionSchema from "./question";
 
 const linkSchema = gql`
-    type Query {
-        _: Boolean
-    }
+  type Query {
+    _: Boolean
+  }
 
-    type Mutation {
-        _: Boolean
-    }
+  type Mutation {
+    _: Boolean
+  }
 
-    type Subscription {
-        _: Boolean
-    }
+  type Subscription {
+    _: Boolean
+  }
 `;
 
-export default [
-  linkSchema, userSchema, answerSchema, questionSchema
-]
+export default [linkSchema, userSchema, answerSchema, questionSchema];

@@ -20,18 +20,18 @@ dotenv.config();
  **/
 
 const server = new ApolloServer({
-	typeDefs: schema,
-	resolvers,
-	context: {
-		me: { id: 1, name: "Bob", age: 35 }
-	},
-	dataSources: () => {
-		return {
-			questoSource: new QuestoSource()
-		}
-	}
+  typeDefs: schema,
+  resolvers,
+  context: {
+    me: { id: 1, name: "Bob", age: 35 },
+  },
+  dataSources: () => {
+    return {
+      questoSource: new QuestoSource(),
+    };
+  },
 });
 
 server.listen().then(({ url }: { url: string }) => {
-	console.log(`🚀  Server ready at ${url}`);
+  console.log(`🚀  Server ready at ${url}`);
 });
