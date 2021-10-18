@@ -13,25 +13,33 @@
   "author": "matewilk",
   "license": "ISC",
   "dependencies": {
-    "@babel/node": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "apollo-server": "^2.9.4",
-    "aws-sdk": "^2.550.0",
-    "dotenv": "^8.1.0",
-    "graphql": "^14.5.8",
-    "shortid": "^2.2.15"
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "apollo-server": "^3.4.0",
+    "apollo-server-express": "^3.4.0",
+    "aws-sdk": "^2.1007.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "graphql": "^15.6.1",
+    "passport": "^0.5.0",
+    "passport-local": "^1.0.0",
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.6.0",
-    "@babel/register": "^7.6.2",
+    "@babel/preset-typescript": "^7.15.0",
+    "@babel/register": "^7.15.3",
     "@types/dotenv": "^8.2.0",
-    "@types/jest": "^24.0.20",
-    "@types/shortid": "0.0.29",
-    "axios": "^0.19.0",
-    "jest": "^24.9.0",
-    "nodemon": "^1.19.4",
+    "@types/express-session": "^1.17.4",
+    "@types/jest": "^27.0.2",
+    "@types/passport": "^1.0.7",
+    "@types/passport-local": "^1.0.34",
+    "@types/shortid": "^0.0.29",
+    "axios": "^0.23.0",
+    "jest": "^27.2.5",
+    "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
-    "typescript": "^3.6.4"
+    "typescript": "^4.4.4"
   },
   "jest": {
     "setupFiles": [

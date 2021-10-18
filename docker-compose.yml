@@ -3,7 +3,9 @@ version: '3'
 services:
   server:
     container_name: questo_server
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/app/Dockerfile
     ports:
       - "4000:4000"
       - "9229:9229"
@@ -11,11 +13,6 @@ services:
       - ".:/usr/src/app"
     networks:
       - questo_network
-#    env variables to access dynamodb-local from this container
-#    environment:
-#      - AWS_ACCESS_KEY_ID=1234567890
-#      - AWS_SECRET_ACCESS_KEY=1234567890
-#      - AWS_REGION=eu-west-2
 
   # dynamodb instance for local development
   dynamodb:
@@ -24,16 +21,21 @@ services:
     image: amazon/dynamodb-local:latest
     ports:
       - "8000:8000"
-    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+    # use -inMemory to store data in mem instead of in files (-dbPath)
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/data"]
     networks:
       - questo_network
+    volumes:
+      - ./.db-files/:/data
 
   # dynamodb script creating table in the local instance of dynamodb
   dynamodb_create_table:
     container_name: dynamodb_create_table
     build:
-      context: .
+      context: ./docker/dynamodb
       dockerfile: Dockerfile-dynamodb-table
+      args:
+        - ADMIN_PASSWD=${ADMIN_PASSWD}
     environment:
       - AWS_ACCESS_KEY_ID=1234567890
       - AWS_SECRET_ACCESS_KEY=1234567890

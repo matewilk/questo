@@ -79,4 +79,26 @@ export default class QuestoSource {
     );
     return result;
   }
+
+  async getUserById({ ID }: { ID: string }) {
+    return await this.getRecord({ ID, RecordType: process.env.USER_PREFIX });
+  }
+
+  async getUserByUsername({ username }: { username: string }) {
+    const args = {
+      IndexName: "TextIndex",
+      KeyConditionExpression: "RecordType=:rtype AND #text=:text",
+      ExpressionAttributeValues: {
+        ":rtype": process.env.USER_PREFIX,
+        ":text": username,
+      },
+      ExpressionAttributeNames: {
+        "#text": "text",
+      },
+    };
+
+    const results = await this.query(args);
+
+    return results?.Items?.pop();
+  }
 }

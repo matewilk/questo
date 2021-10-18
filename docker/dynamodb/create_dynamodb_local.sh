@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 aws dynamodb create-table \
     --cli-input-json file://questo_db_definition.json \

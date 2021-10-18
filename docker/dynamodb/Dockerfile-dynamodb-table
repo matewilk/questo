@@ -1,0 +1,33 @@
+FROM node:12
+
+# unsafe as it stays in docker history
+# use only for development
+# in prod use multi-stage builds or BuildKit
+ARG ADMIN_PASSWD
+
+RUN apt-get update && \
+    apt-get install -y \
+        python \
+        python-dev \
+        python-pip \
+        python-setuptools \
+        groff \
+        less \
+    && pip install --upgrade awscli \
+    && apt-get clean
+
+ADD questo_db_definition.json .
+ADD admin_record.json .
+
+# add admin passwd to admin_record.json
+RUN apt-get install -y jq
+# RUN env
+RUN echo $(cat ./admin_record.json) | jq --arg foo $ADMIN_PASSWD '. + { passwd: { S: $foo } }' >> tmp.json && mv tmp.json admin_record.json
+
+COPY create_dynamodb_local.sh .
+COPY create_admin_user.sh .
+
+RUN ["chmod", "+x", "create_dynamodb_local.sh"]
+RUN ["chmod", "+x", "create_admin_user.sh"]
+
+CMD ["bash", "-c", "./create_dynamodb_local.sh && ./create_admin_user.sh"]

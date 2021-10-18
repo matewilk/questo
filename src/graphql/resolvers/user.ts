@@ -1,26 +1,32 @@
 import shortid from "shortid";
+import { AuthenticationError } from 'apollo-server';
+
 import { PutItem } from "../dataSource/questo";
+import { handleAuth } from "../../helpers/passport-authentication";
 
 const mapItemToType = (item: PutItem) => ({
-  ID: item.ID,
-  RecordType: item.RecordType,
-  name: item.text,
-  score: item.score,
-  type: item.type,
-  date: item.date,
+  ID: item?.ID,
+  RecordType: item?.RecordType,
+  name: item?.text,
+  score: item?.score,
+  type: item?.type,
+  date: item?.date,
 });
 
 export default {
   Query: {
-    user: async (parent, args, { dataSources }) => {
+    user: async (parent, { ID }, { dataSources }) => {
       try {
-        const { ID } = args;
-        const result = await dataSources.questoSource.getRecord({
-          ID,
-          RecordType: `${process.env.USER_PREFIX}`,
-        });
+        const result = await dataSources.questoSource.getUserById({ ID });
 
         return mapItemToType(result);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    currentUser: async (_parent, _args, { user }) => {
+      try {
+        return user;
       } catch (err) {
         console.log(err);
       }
@@ -50,6 +56,15 @@ export default {
         return mapItemToType(result);
       } catch (err) {
         console.log(err);
+      }
+    },
+    login: async (parent, { name, password }, { req }) => {
+      try {
+        const result = await handleAuth(name, password, req)
+
+        return mapItemToType(result);
+      } catch (err) {
+        throw new AuthenticationError('Authentication Failed')
       }
     },
   },

@@ -1,0 +1,17 @@
+{
+  "ID": {
+    "S": "USR_1"
+  },
+  "RecordType": {
+    "S": "USR"
+  },
+  "text": {
+    "S": "Mat"
+  },
+  "type": {
+    "S": "ADMIN"
+  },
+  "score": {
+    "N": "0"
+  }
+}
