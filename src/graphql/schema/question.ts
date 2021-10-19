@@ -1,5 +1,11 @@
 import { gql } from "apollo-server";
 
+const createQuestionFields = `
+  text: String!
+  popularity: Int!
+  category: String!
+`;
+
 export default gql`
   extend type Query {
     questions(cursor: String, limit: Int): Questions!
@@ -7,13 +13,11 @@ export default gql`
   }
 
   input CreateQuestionInput {
-    text: String!
-    popularity: Int!
-    category: String!
+    ${createQuestionFields}
   }
 
   extend type Mutation {
-    createQuestion(input: CreateQuestionInput): Question!
+    createQuestion(${createQuestionFields}): Question!
     answerQuestion(
       QUE_ID: ID!
       text: String!

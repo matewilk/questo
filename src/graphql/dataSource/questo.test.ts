@@ -88,4 +88,41 @@ describe("QuestoSource", () => {
 
     expect(questoSource.dbQuery).toHaveBeenCalledWith(expectedScanItem);
   });
+
+  it("getUserById calls getRecord with appropriate params", async () => {
+    questoSource.getRecord = jest.fn();
+    const ID = "123";
+    const params = { ID };
+    const USR = process.env.USER_PREFIX;
+
+    await questoSource.getUserById(params);
+
+    expect(questoSource.getRecord).toHaveBeenCalledWith({
+      ID,
+      RecordType: USR,
+    });
+  });
+
+  it("getUserByUsername calls query method with appropriate params and returns record properly", async () => {
+    const returnItem = { test: "item " };
+    questoSource.query = jest.fn().mockReturnValue({ Items: [returnItem] });
+    const username = "myusername";
+    const args = { username };
+
+    const result = await questoSource.getUserByUsername(args);
+
+    expect(questoSource.query).toHaveBeenCalledWith({
+      IndexName: "TextIndex",
+      KeyConditionExpression: "RecordType=:rtype AND #text=:text",
+      ExpressionAttributeValues: {
+        ":rtype": process.env.USER_PREFIX,
+        ":text": username,
+      },
+      ExpressionAttributeNames: {
+        "#text": "text",
+      },
+    });
+
+    expect(result).toBe(returnItem);
+  });
 });

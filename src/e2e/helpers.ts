@@ -6,11 +6,9 @@ export const createTestQuestion = async (
   category: string
 ) => {
   const params = {
-    input: {
-      text: text,
-      popularity: popularity,
-      category: category,
-    },
+    text: text,
+    popularity: popularity,
+    category: category,
   };
   const { data } = await createQuestion(params);
   return data.data.createQuestion;

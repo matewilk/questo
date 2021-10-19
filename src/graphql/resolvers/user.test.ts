@@ -11,18 +11,20 @@ jest.useFakeTimers();
 describe("User Resolver", () => {
   let dataSourcesMock;
   beforeEach(() => {
+    const usrRecord = {
+      ID: "USR_123",
+      RecordType: "USR",
+      text: "Bob Swarovski",
+      score: 0,
+      type: "USER",
+      date: 819170640000 /* 1995-12-17T03:24:00 */,
+    };
     dataSourcesMock = {
       dataSources: {
         questoSource: {
           putRecord: jest.fn(),
-          getRecord: jest.fn().mockImplementation(() => ({
-            ID: "USR_123",
-            RecordType: "USR",
-            text: "Bob Swarovski",
-            score: 0,
-            type: "USER",
-            date: 819170640000 /* 1995-12-17T03:24:00 */,
-          })),
+          getRecord: jest.fn().mockImplementation(() => usrRecord),
+          getUserById: jest.fn().mockImplementation(() => usrRecord),
         },
       },
     };
@@ -34,17 +36,17 @@ describe("User Resolver", () => {
     const { Query } = userResolver;
 
     describe("user resolver", () => {
-      it("should call getRecord questoSource method and return user record", async () => {
+      it("should call getUserById questoSource method and return user record", async () => {
         const args = {
           ID: "USR_123",
-          RecordType: `${process.env.USER_PREFIX}`,
         };
 
         const result = await Query.user(null, args, dataSourcesMock);
 
         expect(
-          dataSourcesMock.dataSources.questoSource.getRecord
+          dataSourcesMock.dataSources.questoSource.getUserById
         ).toHaveBeenCalledWith(args);
+
         expect(result).toEqual({
           ID: "USR_123",
           RecordType: "USR",

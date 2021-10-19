@@ -51,10 +51,8 @@ async function startApolloServer() {
     typeDefs: schema,
     resolvers,
     context: ({ req, res }) => {
-      // TODO: proper user auth
-
       return {
-        // user is added to req by passport
+        // user is added to req by passport.js
         user: req.user,
         req,
         res
@@ -68,7 +66,7 @@ async function startApolloServer() {
   });
 
   await server.start();
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, path: '/' });
 
   await new Promise((resolve) => app.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);

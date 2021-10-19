@@ -2,11 +2,15 @@ import axios from "axios";
 
 const API_URL = process.env.API_URL;
 
-export const createQuestion = async (input) =>
+export const createQuestion = async (variables: {
+  text: string;
+  popularity: number;
+  category: string;
+}) =>
   await axios.post(API_URL, {
     query: `
-        mutation ($input: CreateQuestionInput) {
-            createQuestion(input: $input) {
+        mutation ($text: String!, $popularity: Int!, $category: String!) {
+            createQuestion(text: $text, popularity: $popularity, category: $category) {
                 ID
                 RecordType
                 text
@@ -16,7 +20,7 @@ export const createQuestion = async (input) =>
             }
         }
         `,
-    variables: input,
+    variables,
   });
 
 export const question = async (variables: { ID: string }) =>

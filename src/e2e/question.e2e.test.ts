@@ -7,13 +7,13 @@ import {
 import { createTestQuestion } from "./helpers";
 
 describe("Question", () => {
-  describe("createQuestion(input: $createQuestionInput): Question", () => {
+  describe("createQuestion($text: String!, $popularity: Int!, $category: String!): Question", () => {
     it("creates and returns newly created Question", async () => {
       const text = "What is this test for?";
       const popularity = 10;
       const category = "test";
 
-      const input = { input: { text, popularity, category } };
+      const input = { text, popularity, category };
 
       const { data } = await createQuestion(input);
       const question = data.data.createQuestion;

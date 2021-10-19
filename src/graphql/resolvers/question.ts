@@ -67,7 +67,7 @@ export default {
   Mutation: {
     createQuestion: async (
       parent,
-      { input: { text, popularity, category } },
+      { text, popularity, category },
       { dataSources }
     ) => {
       try {
