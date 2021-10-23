@@ -53,6 +53,7 @@ async function startApolloServer() {
     context: ({ req, res }) => {
       return {
         // user is added to req by passport.js
+        // when deserialized properly
         user: req.user,
         req,
         res

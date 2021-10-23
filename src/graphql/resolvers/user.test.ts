@@ -1,4 +1,11 @@
 import userResolver from "./user";
+import { handleAuth } from "../../helpers/passport-authentication";
+
+jest.mock("../../helpers/passport-authentication", () => {
+  return {
+    handleAuth: jest.fn().mockImplementation(() => ({ text: "test" })),
+  };
+});
 
 jest.mock("shortid", () => {
   return {
@@ -10,15 +17,15 @@ jest.useFakeTimers();
 
 describe("User Resolver", () => {
   let dataSourcesMock;
+  const usrRecord = {
+    ID: "USR_123",
+    RecordType: "USR",
+    text: "Bob Swarovski",
+    score: 0,
+    type: "USER",
+    date: 819170640000 /* 1995-12-17T03:24:00 */,
+  };
   beforeEach(() => {
-    const usrRecord = {
-      ID: "USR_123",
-      RecordType: "USR",
-      text: "Bob Swarovski",
-      score: 0,
-      type: "USER",
-      date: 819170640000 /* 1995-12-17T03:24:00 */,
-    };
     dataSourcesMock = {
       dataSources: {
         questoSource: {
@@ -55,6 +62,14 @@ describe("User Resolver", () => {
           date: 819170640000,
           score: 0,
         });
+      });
+    });
+
+    describe("currentUser resolver", () => {
+      it("should return user", async () => {
+        const result = await Query.currentUser(null, null, { user: usrRecord });
+
+        expect(result).toEqual(usrRecord);
       });
     });
   });
@@ -108,6 +123,22 @@ describe("User Resolver", () => {
           date: 819170640000, // date from the mocked result
           score: 0,
         });
+      });
+    });
+
+    describe("login", () => {
+      it("should call handleAuth with params and return its result", async () => {
+        const name = "test";
+        const password = "testpassword";
+        const fakeReq = { req: "fake req" };
+        const result = await Mutation.login(
+          null,
+          { name, password },
+          { req: fakeReq }
+        );
+
+        expect(handleAuth).toHaveBeenCalledWith(name, password, fakeReq);
+        expect(result).toEqual(expect.objectContaining({ name }));
       });
     });
   });

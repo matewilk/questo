@@ -15,7 +15,7 @@ const mapItemToType = (item: PutItem) => ({
 
 export default {
   Query: {
-    user: async (parent, { ID }, { dataSources }) => {
+    user: async (_, { ID }, { dataSources }) => {
       try {
         const result = await dataSources.questoSource.getUserById({ ID });
 
@@ -24,7 +24,7 @@ export default {
         console.log(err);
       }
     },
-    currentUser: async (_parent, _args, { user }) => {
+    currentUser: async (_, __, { user }) => {
       try {
         return user;
       } catch (err) {
@@ -34,7 +34,7 @@ export default {
   },
 
   Mutation: {
-    createUser: async (parent, { name, type }, { dataSources }) => {
+    createUser: async (_, { name, type }, { dataSources }) => {
       try {
         const USR = `${process.env.USER_PREFIX}`;
         const ID = `${USR}_${shortid.generate()}`;
@@ -58,7 +58,7 @@ export default {
         console.log(err);
       }
     },
-    login: async (parent, { name, password }, { req }) => {
+    login: async (_, { name, password }, { req }) => {
       try {
         const result = await handleAuth(name, password, req)
 
