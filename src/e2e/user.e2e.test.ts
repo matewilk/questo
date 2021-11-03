@@ -1,5 +1,6 @@
-import { createUser, user } from "./user.api";
+import { createUser, user, logout } from "./user.api";
 
+// TODO: add login user tests (fake user needed)
 describe("User", () => {
   describe("createUser(name: String!, type: String!): User", () => {
     it("creates and returns newly created User", async () => {
@@ -33,4 +34,13 @@ describe("User", () => {
       expect(data.data.user).toEqual(createdUser);
     });
   });
+
+  describe("logout", () => {
+    it("returns logout success boolean status", async () => {
+      const { data } = await logout();
+      const { success } = data.data.logout;
+
+      expect(success).toEqual(true);
+    });
+  })
 });

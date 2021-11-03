@@ -1,9 +1,11 @@
 import userResolver from "./user";
-import { handleAuth } from "../../helpers/passport-authentication";
+import { handleAuth, logout } from "../../helpers/passport-authentication";
+import { AuthenticationError } from "apollo-server";
 
 jest.mock("../../helpers/passport-authentication", () => {
   return {
     handleAuth: jest.fn().mockImplementation(() => ({ text: "test" })),
+    logout: jest.fn().mockImplementation(() => ({ success: true })),
   };
 });
 
@@ -70,6 +72,28 @@ describe("User Resolver", () => {
         const result = await Query.currentUser(null, null, { user: usrRecord });
 
         expect(result).toEqual(usrRecord);
+      });
+    });
+
+    describe("logout resolver", () => {
+      it("should return logout success boolean", async () => {
+        const fakeReq = { fake: "request" };
+
+        const result = await Query.logout(null, null, { req: fakeReq });
+
+        expect(logout).toHaveBeenCalledWith(fakeReq);
+        expect(result).toEqual({ success: true });
+      });
+
+      it("should return AuthenticationError on error", async () => {
+        const fakeReq = { fake: "request" };
+        logout.mockImplementation(async () =>
+          Promise.reject(new AuthenticationError("Auth failed!"))
+        );
+
+        await expect(
+          Query.logout(null, null, { req: fakeReq })
+        ).rejects.toThrow(AuthenticationError);
       });
     });
   });

@@ -5,11 +5,16 @@ export default gql`
     users: [User!]
     user(ID: ID!): User
     currentUser: User
+    logout: Logout
   }
 
   extend type Mutation {
     createUser(name: String!, type: UserRoleEnum!): User!
     login(name: String!, password: String!): User!
+  }
+  
+  type Logout {
+    success: Boolean
   }
 
   type User {

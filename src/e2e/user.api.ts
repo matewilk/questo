@@ -35,3 +35,14 @@ export const user = async (variables: { ID: string }) =>
         `,
     variables,
   });
+
+export const logout = async () =>
+  await axios.post(API_URL, {
+    query: `
+        query {
+            logout {
+                success
+            }
+        }
+        `,
+  });

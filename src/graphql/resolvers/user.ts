@@ -1,8 +1,8 @@
 import shortid from "shortid";
-import { AuthenticationError } from 'apollo-server';
+import { AuthenticationError } from "apollo-server";
 
 import { PutItem } from "../dataSource/questo";
-import { handleAuth } from "../../helpers/passport-authentication";
+import { handleAuth, logout } from "../../helpers/passport-authentication";
 
 const mapItemToType = (item: PutItem) => ({
   ID: item?.ID,
@@ -29,6 +29,13 @@ export default {
         return user;
       } catch (err) {
         console.log(err);
+      }
+    },
+    logout: async (_, __, { req }) => {
+      try {
+        return await logout(req);
+      } catch (err) {
+        throw new AuthenticationError(err);
       }
     },
   },
@@ -60,11 +67,11 @@ export default {
     },
     login: async (_, { name, password }, { req }) => {
       try {
-        const result = await handleAuth(name, password, req)
+        const result = await handleAuth(name, password, req);
 
         return mapItemToType(result);
       } catch (err) {
-        throw new AuthenticationError('Authentication Failed')
+        throw new AuthenticationError("Authentication failed");
       }
     },
   },

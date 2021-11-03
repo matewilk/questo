@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import QuestoSource, { PutItem } from "../graphql/dataSource/questo";
 import { Request } from "express";
+import { AuthenticationError } from "apollo-server";
 
 const serializeUserFn = (user: { ID: string }, done) => {
   done(null, user.ID);
@@ -65,9 +66,23 @@ const handleAuth = async (
   });
 };
 
+const logout = (req: Request) => {
+  return new Promise((resolve, reject) => {
+    req.session.destroy((err: Error) => {
+      if (err) {
+        reject(new AuthenticationError("Logout failed"));
+      } else {
+        req.logout();
+        resolve({ success: true });
+      }
+    });
+  });
+};
+
 export {
   passportConfig,
   handleAuth,
+  logout,
   serializeUserFn,
   deserializeUserFn,
   passportStrategyFn,
