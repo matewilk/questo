@@ -8,7 +8,7 @@
 node_modules
 
 # infrastructure
-**/**/.terraform
+**/**/.terraform*
 
 # build
 build
