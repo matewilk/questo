@@ -60,6 +60,13 @@ resource "kubernetes_job" "questo_server" {
               memory = "50Mi"
             }
           }
+
+          env_from {
+            config_map_ref {
+              optional = false
+              name = kubernetes_config_map.questo_dynamodb_configmap.metadata.0.name
+            }
+          }
         }
       }
     }
@@ -88,3 +95,77 @@ resource "kubernetes_service" "questo_server_service" {
     type = "LoadBalancer"
   }
 }
+
+resource "kubernetes_deployment" "questo_dynamodb" {
+  metadata {
+    name = "questo-dynamodb-deployment"
+    labels = {
+      app = "QuestoDynamoDb"
+    }
+    namespace = kubernetes_namespace.minikube-namespace.metadata.0.name
+  }
+
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "QuestoDynamoDb"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "QuestoDynamoDb"
+        }
+      }
+      spec {
+        container {
+          name = "questo-dynamodb-container"
+          image = "amazon/dynamodb-local"
+
+          port {
+            container_port = 8000
+            host_port = 8000
+          }
+        }
+      }
+    }
+  }
+}
+
+resource "kubernetes_service" "questo_dynamodb_service" {
+  metadata {
+    name = "questo-dynamodb-service"
+    namespace = kubernetes_namespace.minikube-namespace.metadata.0.name
+  }
+  spec {
+    selector = {
+      app = kubernetes_deployment.questo_dynamodb.metadata.0.labels.app
+    }
+
+    port {
+      protocol = "TCP"
+      port = 8000
+      target_port = 8000
+    }
+  }
+}
+
+resource "kubernetes_config_map" "questo_dynamodb_configmap" {
+  metadata {
+    name = "questo-dynamodb-configmap"
+    namespace = kubernetes_namespace.minikube-namespace.metadata.0.name
+  }
+
+  data = {
+    DB_DOCKER_URL = kubernetes_service.questo_dynamodb_service.metadata.0.name
+    DB_TABLE_NAME = "Questo"
+    DB_REGION = "local"
+    DB_ACCESS_KEY = "local"
+    DB_SECRET_ACCESS_KEY = "local"
+  }
+}
+
+// service map for dynamodb port??
