@@ -37,8 +37,10 @@ services:
       args:
         - ADMIN_PASSWD=${ADMIN_PASSWD}
     environment:
-      - AWS_ACCESS_KEY_ID=1234567890
-      - AWS_SECRET_ACCESS_KEY=1234567890
+      # this is needed to fool aws cli
+      # that you've set up credentials
+      - AWS_ACCESS_KEY_ID=local
+      - AWS_SECRET_ACCESS_KEY=local
       - AWS_REGION=eu-west-2
     networks:
       - questo_network

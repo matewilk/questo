@@ -19,16 +19,10 @@ resource "kubernetes_job" "questo_server" {
   }
 
   # only for "job"s
+  # in other words - run infinitely
   wait_for_completion = false
 
   spec {
-# commented out lines are not supported by "job" (only "deployment")
-#    replicas = 1
-#    selector {
-#      match_labels = {
-#        app = "QuestoServer"
-#      }
-#    }
     template {
       metadata {
         labels = {
@@ -126,7 +120,9 @@ resource "kubernetes_deployment" "questo_dynamodb" {
           image = "amazon/dynamodb-local"
 
           port {
+            protocol = "TCP"
             container_port = 8000
+            host_ip = 8000
             host_port = 8000
           }
         }
@@ -160,12 +156,47 @@ resource "kubernetes_config_map" "questo_dynamodb_configmap" {
   }
 
   data = {
-    DB_DOCKER_URL = kubernetes_service.questo_dynamodb_service.metadata.0.name
+    DB_DOCKER_URL = "${kubernetes_service.questo_dynamodb_service.metadata.0.name}:8000"
     DB_TABLE_NAME = "Questo"
     DB_REGION = "local"
     DB_ACCESS_KEY = "local"
     DB_SECRET_ACCESS_KEY = "local"
+    QUESTION_PREFIX = "QUE"
+    ANSWER_PREFIX = "ANS"
+    USER_PREFIX = "USR"
   }
 }
 
-// service map for dynamodb port??
+resource "kubernetes_job" "questo_dynamodb_create_table" {
+  depends_on = [
+    kubernetes_deployment.questo_dynamodb
+  ]
+  metadata {
+    name = "questo-dybanamodb-create-table-job"
+    labels = {
+      app = "QuestoDynamoDb"
+    }
+    namespace = kubernetes_namespace.minikube-namespace.metadata.0.name
+  }
+
+  spec {
+    template {
+      metadata {
+        labels = {
+          app = "QuestoDynamoDb"
+        }
+      }
+
+      spec {
+        restart_policy = "Never"
+
+        container {
+          name = "questo-dynamodb-create-table-container"
+          image = "dynamodb-create-table-image"
+
+          image_pull_policy = "Never"
+        }
+      }
+    }
+  }
+}

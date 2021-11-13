@@ -5,6 +5,12 @@ FROM node:12
 # in prod use multi-stage builds or BuildKit
 ARG ADMIN_PASSWD
 
+# for Kubernetes/terrafor local setup
+# to fool aws cli we have credentials set up
+ENV AWS_ACCESS_KEY_ID=local
+ENV AWS_SECRET_ACCESS_KEY=local
+ENV AWS_REGION=eu-west-2
+
 RUN apt-get update && \
     apt-get install -y \
         python \
