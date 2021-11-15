@@ -1,6 +1,6 @@
-#**Questo** (server)
+# **Questo** (server)
 
-###Docker configuration (currently only for local development):
+### Docker configuration (currently only for local development):
 - docker-compose.yml - contains 3 services
   - server - node.js app server
   - dybamodb - local version od dynamodb instance
@@ -10,12 +10,12 @@
     - uses `create_dynamodb_local.sh` to create the db table
     - (this container might be replaced by seeding the db on local db connect)
     
-###For Dev development:
+### For Dev development:
 - `docker:dev:start` - starts the `start` npm script inside docker container
 - `docker:dev:stop` - stops dev containers
 - the app is exposed to `http://localhsot:4000`
 
-###For Dev Debugging:
+### For Dev Debugging:
 - run `docker:dev:start` like for development
   - `docker-compose.yaml` exposes `9229` nodemon default debug port
   - `start` npm script passes `--inspect=0.0.0.0` to `nodemon` which allows to connect from any address
@@ -23,7 +23,7 @@
   - `reconnect automatically` option
   - port `9229` which is a default `nodemon --inspect` port
 
-###Running on Kubernetes locally (via Minikube):
+### Running on Kubernetes locally (via Minikube):
 - prerequisites (for your local machine)
   - (install `docker` - for building images)
   - install `kubectl` - to interact with `minikube env`
