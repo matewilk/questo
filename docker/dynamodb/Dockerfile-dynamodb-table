@@ -4,12 +4,16 @@ FROM node:12
 # use only for development
 # in prod use multi-stage builds or BuildKit
 ARG ADMIN_PASSWD
+ARG DYNAMODB_URL
+ARG AWS_REGION
 
 # for Kubernetes/terrafor local setup
 # to fool aws cli we have credentials set up
 ENV AWS_ACCESS_KEY_ID=local
 ENV AWS_SECRET_ACCESS_KEY=local
-ENV AWS_REGION=eu-west-2
+
+ENV DYNAMODB_URL=$DYNAMODB_URL
+ENV AWS_REGION=$AWS_REGION
 
 RUN apt-get update && \
     apt-get install -y \
@@ -36,4 +40,4 @@ COPY create_admin_user.sh .
 RUN ["chmod", "+x", "create_dynamodb_local.sh"]
 RUN ["chmod", "+x", "create_admin_user.sh"]
 
-CMD ["bash", "-c", "./create_dynamodb_local.sh && ./create_admin_user.sh"]
+CMD ["bash", "-c", "./create_dynamodb_local.sh $DYNAMODB_URL $AWS_REGION && ./create_admin_user.sh $DYNAMODB_URL $AWS_REGION"]
