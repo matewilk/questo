@@ -28,7 +28,7 @@
   - (install `docker` - for building images)
   - install `kubectl` - to interact with `minikube env`
   - install `minikube` - to run Kubernetes locally
-  - install `minikube tunnel` - to be able to get `external IP` from the `questo-server-service` (see terraform config [file](tf/kubernetes/main.tf))
+  - install `minikube tunnel` - to be able to get `external IP` from the `questo-server-service` (see terraform config [file](tf/local/kubernetes/main.tf))
   - install `terraform` - to deploy infrastructure to Kubernetes (minikube) cluster
 - switch to minikube docker env
   - run `minikube docker-env` (or `eval $(minikube -p minikube docker-env)`)
