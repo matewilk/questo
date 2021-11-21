@@ -1,0 +1,57 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@4.7
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build
+  test:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name: 'Run tests'
+          command: npm test
+  build-image:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: docker build -t matewilk/questo-server-image -f docker/app/Dockerfile .
+      - run: docker push matewilk/questo-server-image
+  push-image:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: /tmp/workspace
+      - run: docker push matewilk/questo-server-image
+
+workflows:
+  push-image:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - build-image:
+          requires:
+            - test
+      - approve-push-image:
+          type: approval
+          requires:
+            - build-image
+      - push-image:
+          requires:
+            - approve-push-image
