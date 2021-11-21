@@ -12,9 +12,9 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - persist_to_workspace:
-          root: /tmp/workspace
+          root: .
           paths:
-            - build
+            - .
   test:
     docker:
       - image: cimg/node:16.10
@@ -28,14 +28,14 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: .
       - run: docker build -t matewilk/questo-server-image -f docker/app/Dockerfile .
       - run: docker push matewilk/questo-server-image
   push-image:
     machine: true
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: .
       - run: docker push matewilk/questo-server-image
 
 workflows:
