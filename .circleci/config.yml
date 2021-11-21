@@ -30,7 +30,7 @@ jobs:
       - attach_workspace:
           at: .
       - run: docker build -t matewilk/questo-server-image -f docker/app/Dockerfile .
-      - run: docker save -o matewilk/questo-server-image.tar matewilk/questo-server-image
+      - run: docker save -o questo-server-image.tar matewilk/questo-server-image
       - persist_to_workspace:
           root: .
           paths:
@@ -40,7 +40,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: docker load -i matewilk/questo-server-image.tar
+      - run: docker load -i questo-server-image.tar
       - run: docker push matewilk/questo-server-image
 
 workflows:
