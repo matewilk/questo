@@ -20,7 +20,7 @@ jobs:
       - image: cimg/node:16.10
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: .
       - run:
           name: 'Run tests'
           command: npm test
