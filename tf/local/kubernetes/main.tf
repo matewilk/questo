@@ -156,7 +156,7 @@ resource "kubernetes_config_map" "questo_dynamodb_configmap" {
   }
 
   data = {
-    DB_DOCKER_URL = "http://${kubernetes_service.questo_dynamodb_service.metadata.0.name}:8000"
+    DB_URL = "http://${kubernetes_service.questo_dynamodb_service.metadata.0.name}:8000"
     DB_TABLE_NAME = "Questo"
     DB_REGION = "local"
     DB_ACCESS_KEY = "local"
