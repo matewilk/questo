@@ -30,6 +30,10 @@ jobs:
       - attach_workspace:
           at: .
       - run: docker build -t matewilk/questo-server-image -f docker/app/Dockerfile .
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   push-image:
     machine: true
     steps:
