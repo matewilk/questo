@@ -1,0 +1,75 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@4.7
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  test:
+    docker:
+      - image: cimg/node:16.10
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: 'Run tests'
+          command: npm test
+  build-image:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: .
+      - run: docker build -t matewilk/questo-server-image-${ENV} -f docker/app/Dockerfile .
+      - run: docker save -o questo-server-image-${ENV}.tar matewilk/questo-server-image-${ENV}
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  push-image:
+    machine: true
+    steps:
+      - attach_workspace:
+          at: .
+      - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+      - run: docker load -i questo-server-image-${ENV}.tar
+      - run: docker push matewilk/questo-server-image-${ENV}
+
+workflows:
+  development:
+    when:
+      and:
+        - not:
+            equal: [ master, << pipeline.git.branch >> ]
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - build-image:
+          context: questo-dev-context
+          requires:
+            - test
+      - approve-push-image:
+          type: approval
+          requires:
+            - build-image
+      - push-image:
+          context: questo-dev-context
+          requires:
+            - approve-push-image
+  prod:
+    when:
+      and:
+        - equal: [ master, << pipeline.git.branch >> ]
+    jobs:
+      - build

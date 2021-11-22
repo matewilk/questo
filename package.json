@@ -8,7 +8,8 @@
     "start": "nodemon --inspect=0.0.0.0 --exec babel-node --extensions '.ts' src/index.ts",
     "docker:dev:start": "docker-compose up",
     "docker:dev:stop": "docker-compose down",
-    "test": "jest --verbose"
+    "test": "jest ./src",
+    "test:e2e": "jest ./e2e"
   },
   "author": "matewilk",
   "license": "ISC",

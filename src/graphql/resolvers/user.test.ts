@@ -1,21 +1,10 @@
 import userResolver from "./user";
-import { handleAuth, logout } from "../../helpers/passport-authentication";
-import { AuthenticationError } from "apollo-server";
-
-jest.mock("../../helpers/passport-authentication", () => {
-  return {
-    handleAuth: jest.fn().mockImplementation(() => ({ text: "test" })),
-    logout: jest.fn().mockImplementation(() => ({ success: true })),
-  };
-});
 
 jest.mock("shortid", () => {
   return {
     generate: () => "123456789",
   };
 });
-
-jest.useFakeTimers();
 
 describe("User Resolver", () => {
   let dataSourcesMock;
@@ -74,28 +63,6 @@ describe("User Resolver", () => {
         expect(result).toEqual(usrRecord);
       });
     });
-
-    describe("logout resolver", () => {
-      it("should return logout success boolean", async () => {
-        const fakeReq = { fake: "request" };
-
-        const result = await Query.logout(null, null, { req: fakeReq });
-
-        expect(logout).toHaveBeenCalledWith(fakeReq);
-        expect(result).toEqual({ success: true });
-      });
-
-      it("should return AuthenticationError on error", async () => {
-        const fakeReq = { fake: "request" };
-        logout.mockImplementation(async () =>
-          Promise.reject(new AuthenticationError("Auth failed!"))
-        );
-
-        await expect(
-          Query.logout(null, null, { req: fakeReq })
-        ).rejects.toThrow(AuthenticationError);
-      });
-    });
   });
 
   describe("Mutation", () => {
@@ -114,7 +81,7 @@ describe("User Resolver", () => {
       global.Date.now = realDateNow;
     });
 
-    describe("createUser", () => {
+    describe("createUser resolver", () => {
       it("should create and immediately get and return user record", async () => {
         const args = { name: "Bob Swarovski", type: "USER" };
         const ID = "USR_123456789";
@@ -147,22 +114,6 @@ describe("User Resolver", () => {
           date: 819170640000, // date from the mocked result
           score: 0,
         });
-      });
-    });
-
-    describe("login", () => {
-      it("should call handleAuth with params and return its result", async () => {
-        const name = "test";
-        const password = "testpassword";
-        const fakeReq = { req: "fake req" };
-        const result = await Mutation.login(
-          null,
-          { name, password },
-          { req: fakeReq }
-        );
-
-        expect(handleAuth).toHaveBeenCalledWith(name, password, fakeReq);
-        expect(result).toEqual(expect.objectContaining({ name }));
       });
     });
   });

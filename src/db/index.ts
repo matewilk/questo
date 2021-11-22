@@ -5,7 +5,7 @@ export default class Database {
   async connect() {
     if (!this._connection) {
       const params = {
-        endpoint: process.env.DB_DOCKER_URL,
+        endpoint: process.env.DB_URL,
         region: process.env.DB_REGION,
         accessKeyId: process.env.DB_ACCESS_KEY,
         secretAccessKey: process.env.DB_SECRET_ACCESS_KEY,
