@@ -71,3 +71,5 @@ workflows:
     when:
       and:
         - equal: [ master, << pipeline.git.branch >> ]
+    jobs:
+      - build
