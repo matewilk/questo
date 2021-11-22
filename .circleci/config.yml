@@ -29,8 +29,8 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run: docker build -t matewilk/questo-server-image -f docker/app/Dockerfile .
-      - run: docker save -o questo-server-image.tar matewilk/questo-server-image
+      - run: docker build -t matewilk/questo-server-image-${ENV} -f docker/app/Dockerfile .
+      - run: docker save -o questo-server-image-${ENV}.tar matewilk/questo-server-image-${ENV}
       - persist_to_workspace:
           root: .
           paths:
@@ -41,17 +41,18 @@ jobs:
       - attach_workspace:
           at: .
       - run: echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-      - run: docker load -i questo-server-image.tar
-      - run: docker push matewilk/questo-server-image
+      - run: docker load -i questo-server-image-${ENV}.tar
+      - run: docker push matewilk/questo-server-image-${ENV}
 
 workflows:
-  push-image:
+  push-dev-image:
     jobs:
       - build
       - test:
           requires:
             - build
       - build-image:
+          context: questo-dev-context
           requires:
             - test
       - approve-push-image:
@@ -59,5 +60,6 @@ workflows:
           requires:
             - build-image
       - push-image:
+          context: questo-dev-context
           requires:
             - approve-push-image
