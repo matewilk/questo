@@ -45,7 +45,11 @@ jobs:
       - run: docker push matewilk/questo-server-image-${ENV}
 
 workflows:
-  push-dev-image:
+  development:
+    when:
+      and:
+        - not:
+            equal: [ master, << pipeline.git.branch >> ]
     jobs:
       - build
       - test:
@@ -63,3 +67,7 @@ workflows:
           context: questo-dev-context
           requires:
             - approve-push-image
+  prod:
+    when:
+      and:
+        - equal: [ master, << pipeline.git.branch >> ]
