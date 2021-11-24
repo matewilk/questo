@@ -9,6 +9,7 @@ node_modules
 
 # infrastructure
 **/**/.terraform
+**/**/terraform.tfstate*
 
 # build
 build
