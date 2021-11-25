@@ -63,7 +63,7 @@ resource "kubernetes_service" "questo-server-service" {
       port        = 80
       target_port = 4000
     }
-    type = "LoadBalancer"
+    type = "NodePort"
   }
 }
 
@@ -74,7 +74,9 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     namespace = kubernetes_namespace.app-namespace.metadata.0.name
     annotations = {
       "kubernetes.io/ingress.class" = "alb"
-      "alb.ingress.kubernetes.io/target-type" = "instance"
+      "alb.ingress.kubernetes.io/target-type" = "ip"
+      "alb.ingress.kubernetes.io/scheme" = "internet-facing"
+      "alb.ingress.kubernetes.io/load-balancer-name" = "questo-server-alb-${var.env}"
     }
   }
   spec {
