@@ -7,11 +7,11 @@ provider "helm" {
 }
 
 resource "helm_release" "aws-load-balancer-controller" {
-  name       = "aws-load-balancer-controller"
+  name = "aws-load-balancer-controller"
 
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
-  namespace = "kube-system"
+  namespace  = "kube-system"
 
   set {
     name  = "clusterName"
@@ -25,7 +25,7 @@ resource "helm_release" "aws-load-balancer-controller" {
 
   set {
     name  = "image.repository"
-    value = format("602401143452.dkr.ecr.%s.amazonaws.com/amazon/aws-load-balancer-controller",var.region)
+    value = format("602401143452.dkr.ecr.%s.amazonaws.com/amazon/aws-load-balancer-controller", var.region)
   }
 
   set {

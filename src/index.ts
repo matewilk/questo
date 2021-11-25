@@ -30,6 +30,10 @@ async function startApolloServer() {
   // body parse middleware
   app.use(express.json());
 
+  app.get("/health", (req, res) => {
+    res.status(200).send("service is healthy");
+  });
+
   app.use(
     session({
       name: "questo.sess",
@@ -56,7 +60,7 @@ async function startApolloServer() {
         // when deserialized properly
         user: req.user,
         req,
-        res
+        res,
       };
     },
     dataSources: (): DataSources => {
@@ -67,7 +71,7 @@ async function startApolloServer() {
   });
 
   await server.start();
-  server.applyMiddleware({ app, path: '/' });
+  server.applyMiddleware({ app, path: "/" });
 
   await new Promise((resolve) => app.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
