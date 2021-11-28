@@ -22,10 +22,12 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: 'Run tests'
+          name: "Run tests"
           command: npm test
   build-image:
-    machine: true
+    machine:
+      image: ubuntu-2004:202111-01
+      docker_layer_caching: true
     steps:
       - attach_workspace:
           at: .
@@ -36,7 +38,9 @@ jobs:
           paths:
             - .
   push-image:
-    machine: true
+    machine:
+      image: ubuntu-2004:202111-01
+      docker_layer_caching: true
     steps:
       - attach_workspace:
           at: .
@@ -49,7 +53,7 @@ workflows:
     when:
       and:
         - not:
-            equal: [ master, << pipeline.git.branch >> ]
+            equal: [master, << pipeline.git.branch >>]
     jobs:
       - build
       - test:
@@ -70,6 +74,6 @@ workflows:
   prod:
     when:
       and:
-        - equal: [ master, << pipeline.git.branch >> ]
+        - equal: [master, << pipeline.git.branch >>]
     jobs:
       - build
