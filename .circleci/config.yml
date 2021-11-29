@@ -17,13 +17,12 @@ jobs:
   deploy-k8s-cluster:
     docker:
       - image: hashicorp/terraform:latest
+    working_directory: ~/project/tf/k8s
     steps:
       - attach_workspace:
           at: .
-      - checkout
-      - run:
-          name: "cd to k8s"
-          command: cd tf/k8s
+      - checkout:
+          path: ~/project
       - run: terraform init
       - run: terraform get
       - run:
