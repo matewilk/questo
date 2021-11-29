@@ -10,6 +10,8 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
+      - terraform/install:
+          terraform_version: "1.0.11"
       - terraform/init:
           path: ./tf/k8s
       - terraform/validate:
