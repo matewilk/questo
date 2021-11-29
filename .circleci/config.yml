@@ -3,23 +3,32 @@ version: 2.1
 orbs:
   node: circleci/node@4.7
   aws-cli: circleci/aws-cli@2.0
-  terraform: circleci/terraform@3.0.0
 
 jobs:
-  deploy-k8s-cluster:
-    executor: terraform/default
+  generate-aws-credentails:
+    executor: aws-cli/default
     steps:
+      - aws-cli/setup:
+          profile-name: questo-circleci
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  deploy-k8s-cluster:
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: .
       - checkout
-      - terraform/install:
-          terraform_version: "1.0.11"
-      - terraform/init:
-          path: ./tf/k8s
-      - terraform/validate:
-          path: ./tf/k8s
-      - terraform/fmt:
-          path: ./tf/k8s
-      - terraform/plan:
-          path: ./tf/k8s
+      - run: terraform init
+      - run: terraform get
+      - run:
+          name: "Validate tf config"
+          command: terraform validat
+      - run:
+          name: "Run the plan"
+          command: terraform plan
   build:
     docker:
       - image: cimg/node:16.10
@@ -71,6 +80,8 @@ workflows:
         - not:
             equal: [master, << pipeline.git.branch >>]
     jobs:
+      - generate-aws-credentails:
+          context: questo-dev-context
       - deploy-k8s-cluster:
           context: questo-dev-context
 
