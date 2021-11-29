@@ -37,6 +37,10 @@ jobs:
           command: |
             cd tf/k8s
             terraform plan -out k8s-plan
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   k8s-tf-apply:
     docker:
       - image: hashicorp/terraform:latest
