@@ -21,14 +21,18 @@ jobs:
       - attach_workspace:
           at: .
       - checkout
+      - run:
+          name: "cd to k8s"
+          command: cd tf/k8s
       - run: terraform init
       - run: terraform get
       - run:
           name: "Validate tf config"
-          command: terraform validat
+          command: terraform validate
       - run:
           name: "Run the plan"
           command: terraform plan
+
   build:
     docker:
       - image: cimg/node:16.10
