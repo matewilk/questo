@@ -2,8 +2,22 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.7
+  aws-cli: circleci/aws-cli@2.0
+  terraform: circleci/terraform@3.0.0
 
 jobs:
+  deploy-k8s-cluster:
+    executor: tarraform/default
+    steps:
+      - checkout
+      - terraform/init:
+          path: ./tf/k8s
+      - terraform/validate:
+          path: ./tf/k8s
+      - terraform/fmt:
+          path: ./tf/k8s
+      - terraform/plan:
+          path: ./tf/k8s
   build:
     docker:
       - image: cimg/node:16.10
@@ -49,6 +63,15 @@ jobs:
       - run: docker push matewilk/questo-server-image-${ENV}
 
 workflows:
+  deploy-infra-dev:
+    when:
+      and:
+        - not:
+            equal: [master, << pipeline.git.branch >>]
+    jobs:
+      - deploy-k8s-cluster:
+          context: questo-dev-context
+
   development:
     when:
       and:
@@ -71,6 +94,7 @@ workflows:
           context: questo-dev-context
           requires:
             - approve-push-image
+
   prod:
     when:
       and:
