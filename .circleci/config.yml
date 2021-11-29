@@ -17,20 +17,26 @@ jobs:
   deploy-k8s-cluster:
     docker:
       - image: hashicorp/terraform:latest
-    working_directory: ~/project/tf/k8s
     steps:
       - attach_workspace:
           at: .
-      - checkout:
-          path: ~/project
-      - run: terraform init
-      - run: terraform get
+      - checkout
+      - run: |
+          cd tf/k8s
+          terraform init -reconfigure -backend-config=dev.tfbackend
+      - run: |
+          cd tf/k8s
+          terraform get
       - run:
           name: "Validate tf config"
-          command: terraform validate
+          command: |
+            cd tf/k8s
+            terraform validate
       - run:
           name: "Run the plan"
-          command: terraform plan
+          command: |
+            cd tf/k8s
+            terraform plan
 
   build:
     docker:
