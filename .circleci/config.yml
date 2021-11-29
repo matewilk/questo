@@ -23,7 +23,7 @@ jobs:
       - checkout
       - run:
           name: "cd to k8s"
-          command: cd tf/k8s
+          command: cd project/tf/k8s
       - run: terraform init
       - run: terraform get
       - run:
@@ -88,6 +88,8 @@ workflows:
           context: questo-dev-context
       - deploy-k8s-cluster:
           context: questo-dev-context
+          requires:
+            - generate-aws-credentails
 
   development:
     when:
