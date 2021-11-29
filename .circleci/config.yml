@@ -110,6 +110,8 @@ workflows:
             - k8s-tf-plan
       - k8s-tf-apply:
           context: questo-dev-context
+          requires:
+            - approve-k8s-tf-apply
 
   development:
     when:
