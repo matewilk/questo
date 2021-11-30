@@ -69,7 +69,7 @@ jobs:
             echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
             aws-iam-authenticator help
       - run: |
-          cd root/project/<< parameters.tf-dir >>
+          cd << parameters.tf-dir >>
           terraform apply tfplan
   terraform-destroy:
     parameters:
