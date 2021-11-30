@@ -40,15 +40,15 @@ module "eks" {
   workers_additional_policies = [aws_iam_policy.worker_policy.arn]
 
   map_roles = [
-#    {
-#      "groups" : ["system:bootstrappers", "system:nodes"],
-#      "rolearn" : "arn:aws:iam::<ACCOUNT_ID>:role/<EKS_NODE_ROLE>",
-#      "username" : "system:node:{{EC2PrivateDNSName}"
-#    },
     {
       "groups" : ["system:masters"],
       "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks-admin-role}",
       "username" : var.eks-admin
+    },
+    {
+      "groups" : ["system:masters"],
+      "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks-admin-role}",
+      "username" : "admin-dev"
     },
     {
       "groups" : [""],
