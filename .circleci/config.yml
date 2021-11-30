@@ -6,10 +6,24 @@ orbs:
 
 jobs:
   generate-aws-credentails:
+    parameters:
+      tf-dir:
+        type: string
+      s3-bucket:
+        type: string
+        default: "questo-infra"
+      env:
+        type: string
+        default: "dev"
     executor: aws-cli/default
     steps:
       - aws-cli/setup:
           profile-name: questo-circleci
+          run:
+            name: "download kubeconfig from s3"
+            command: |
+              cd << parameters.tf-dir >>
+              aws s3 cp s3://<< parameters.s3-bucket >>/<< parameters.env >>/eks/kubeconfig .
       - persist_to_workspace:
           root: .
           paths:
@@ -141,6 +155,7 @@ workflows:
             equal: [master, << pipeline.git.branch >>]
     jobs:
       - generate-aws-credentails:
+          tf-dir: tf/k8s
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/k8s
@@ -173,6 +188,7 @@ workflows:
             equal: [master, << pipeline.git.branch >>]
     jobs:
       - generate-aws-credentails:
+          tf-dir: tf/app
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/app
