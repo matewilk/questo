@@ -67,7 +67,7 @@ jobs:
           at: .
       - run: |
           cd << parameters.tf-dir >>
-          terraform destroy
+          terraform destroy --auto-approve
 
   build:
     docker:
