@@ -171,7 +171,6 @@ workflows:
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/k8s
-          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - generate-aws-credentails
@@ -205,6 +204,7 @@ workflows:
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/app
+          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - generate-aws-credentails
