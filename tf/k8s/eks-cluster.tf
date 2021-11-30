@@ -75,7 +75,7 @@ resource "kubernetes_role_binding" "eks-admin-role-binding" {
     name = "eks-admin-role-binding"
   }
   role_ref {
-    api_group = ""
+    api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
     name      = var.eks-developer-role
   }
