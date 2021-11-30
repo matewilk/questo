@@ -14,7 +14,7 @@ jobs:
           root: .
           paths:
             - .
-  k8s-tf-plan:
+  terraform-plan:
     parameters:
       tf-dir:
         type: string
@@ -39,12 +39,12 @@ jobs:
           name: "Run the plan"
           command: |
             cd << parameters.tf-dir >>
-            terraform plan -out k8s-plan
+            terraform plan -out tfplan
       - persist_to_workspace:
           root: .
           paths:
             - .
-  k8s-tf-apply:
+  terraform-apply:
     parameters:
       tf-dir:
         type: string
@@ -55,8 +55,8 @@ jobs:
           at: .
       - run: |
           cd << parameters.tf-dir >>
-          terraform apply k8s-plan
-  k8s-tf-destroy:
+          terraform apply tfplan
+  terraform-destroy:
     parameters:
       tf-dir:
         type: string
@@ -122,29 +122,60 @@ workflows:
     jobs:
       - generate-aws-credentails:
           context: questo-dev-context
-      - k8s-tf-plan:
+      - terraform-plan:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
             - generate-aws-credentails
-      - approve-k8s-tf-apply:
+      - approve-terraform-apply:
           type: approval
           requires:
-            - k8s-tf-plan
-      - k8s-tf-apply:
+            - terraform-plan
+      - terraform-apply:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
-            - approve-k8s-tf-apply
-      - approve-k8s-tf-destroy:
+            - approve-terraform-apply
+      - approve-terraform-destroy:
           type: approval
           requires:
-            - k8s-tf-plan
-      - k8s-tf-destroy:
+            - terraform-plan
+      - terraform-destroy:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
-            - approve-k8s-tf-destroy
+            - approve-terraform-destroy
+  deploy-app-dev:
+    when:
+      and:
+        - not:
+            equal: [master, << pipeline.git.branch >>]
+    jobs:
+      - generate-aws-credentails:
+          context: questo-dev-context
+      - terraform-plan:
+          tf-dir: tf/app
+          context: questo-dev-context
+          requires:
+            - generate-aws-credentails
+      - approve-terraform-apply:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-apply:
+          tf-dir: tf/app
+          context: questo-dev-context
+          requires:
+            - approve-terraform-apply
+      - approve-terraform-destroy:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-destroy:
+          tf-dir: tf/app
+          context: questo-dev-context
+          requires:
+            - approve-terraform-destroy
 
   development:
     when:
