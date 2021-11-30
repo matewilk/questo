@@ -4,6 +4,24 @@ orbs:
   node: circleci/node@4.7
   aws-cli: circleci/aws-cli@2.0
 
+commands:
+  install-aws-iam-authenticator:
+    steps:
+      - run:
+          name: "Install curl"
+          command: apk add --no-cache curl
+      - run:
+          # aws-iam-auth is used to read eks config file
+          # in the /tf/app workflow as they require external
+          # kubeconfig file from s3 bucket
+          name: "Install aws-iam-authenticator"
+          command: |
+            cd ../..
+            curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+            chmod +x ./aws-iam-authenticator
+            mv ./aws-iam-authenticator /usr/local/bin
+            aws-iam-authenticator help
+
 jobs:
   generate-aws-credentails:
     parameters:
@@ -33,6 +51,9 @@ jobs:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
@@ -49,6 +70,10 @@ jobs:
           command: |
             cd << parameters.tf-dir >>
             terraform validate
+      - when:
+          condition: << parameters.aws-iam-auth >>
+          steps:
+            - install-aws-iam-authenticator
       - run:
           name: "Run the plan"
           command: |
@@ -70,23 +95,10 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run:
-          name: "Install curl"
-          command: apk add --no-cache curl
       - when:
           condition: << parameters.aws-iam-auth >>
           steps:
-            - run:
-                # aws-iam-auth is used to read eks config file
-                # in the /tf/app workflow as they require external
-                # kubeconfig file from s3 bucket
-                name: "Install aws-iam-authenticator"
-                command: |
-                  cd ../..
-                  curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
-                  chmod +x ./aws-iam-authenticator
-                  mv ./aws-iam-authenticator /usr/local/bin
-                  aws-iam-authenticator help
+            - install-aws-iam-authenticator
       - run: |
           cd << parameters.tf-dir >>
           terraform apply tfplan
@@ -159,6 +171,7 @@ workflows:
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/k8s
+          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - generate-aws-credentails
