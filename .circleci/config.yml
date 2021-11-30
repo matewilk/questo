@@ -106,11 +106,18 @@ jobs:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
+      - when:
+          condition: << parameters.aws-iam-auth >>
+          steps:
+            - install-aws-iam-authenticator
       - run: |
           cd << parameters.tf-dir >>
           terraform destroy --auto-approve
@@ -223,6 +230,7 @@ workflows:
             - terraform-plan
       - terraform-destroy:
           tf-dir: tf/app
+          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - approve-terraform-destroy
