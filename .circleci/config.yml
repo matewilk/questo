@@ -50,6 +50,15 @@ jobs:
       - run: |
           cd tf/k8s
           terraform apply k8s-plan
+  k8s-tf-destroy:
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          cd tf/k8s
+          terraform destroy
 
   build:
     docker:
@@ -116,6 +125,14 @@ workflows:
           context: questo-dev-context
           requires:
             - approve-k8s-tf-apply
+      - approve-k8s-tf-destroy:
+          type: approval
+          requires:
+            - k8s-tf-plan
+      - k8s-tf-destroy:
+          context: questo-dev-context
+          requires:
+            - approve-k8s-tf-destroy
 
   development:
     when:
