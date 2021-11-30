@@ -57,13 +57,13 @@ module "eks" {
     }
   ]
 
-#  map_users = [
-#    {
-#      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/admin-dev"
-#      username = "admin-dev"
-#      groups   = ["system:masters"]
-#    },
-#  ]
+  map_users = [
+    {
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/admin-dev"
+      username = "admin-dev"
+      groups   = ["system:masters"]
+    },
+  ]
 }
 
 resource "kubernetes_role" "eks-admin-role" {
