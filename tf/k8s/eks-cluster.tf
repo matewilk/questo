@@ -56,6 +56,14 @@ module "eks" {
       "username" : var.eks-developer
     }
   ]
+
+#  map_users = [
+#    {
+#      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/admin-dev"
+#      username = "admin-dev"
+#      groups   = ["system:masters"]
+#    },
+#  ]
 }
 
 resource "kubernetes_role" "eks-admin-role" {
@@ -77,7 +85,7 @@ resource "kubernetes_role_binding" "eks-admin-role-binding" {
   role_ref {
     api_group = "rbac.authorization.k8s.io"
     kind      = "Role"
-    name      = var.eks-developer-role
+    name      = var.eks-admin-role
   }
   subject {
     kind = "ServiceAccount"
