@@ -22,6 +22,13 @@ commands:
             mv ./aws-iam-authenticator /usr/local/bin
             aws-iam-authenticator help
   download-kubeconfig-s3:
+    parameters:
+      tf-dir:
+        type: string
+      s3-bucket:
+        type: string
+      env:
+        type: string
     steps:
       - run:
           name: "download kubeconfig from s3"
@@ -51,7 +58,10 @@ jobs:
       - when:
           condition: << parameters.download-kubeconfig >>
           steps:
-            - download-kubeconfig-s3
+            - download-kubeconfig-s3:
+                tf-dir: << parameters.tf-dir >>
+                s3-bucket: << parameters.s3-bucket >>
+                env: << parameters.env >>
       - persist_to_workspace:
           root: .
           paths:
