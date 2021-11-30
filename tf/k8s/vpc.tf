@@ -1,13 +1,6 @@
-variable "region" {
-  default     = "eu-west-2"
-  description = "AWS Region"
-}
-
 provider "aws" {
   region = var.region
 }
-
-data "aws_availability_zones" "available" {}
 
 locals {
   cluster_name = "questo-eks-${random_string.suffix.result}"
