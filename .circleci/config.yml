@@ -180,7 +180,6 @@ workflows:
             - terraform-plan
       - terraform-apply:
           tf-dir: tf/k8s
-          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - approve-terraform-apply
@@ -214,6 +213,7 @@ workflows:
             - terraform-plan
       - terraform-apply:
           tf-dir: tf/app
+          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - approve-terraform-apply
