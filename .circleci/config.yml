@@ -18,9 +18,6 @@ jobs:
     parameters:
       tf-dir:
         type: string
-      aws-iam-auth:
-        type: boolean
-        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
@@ -51,6 +48,9 @@ jobs:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
