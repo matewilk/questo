@@ -10,6 +10,9 @@ jobs:
     steps:
       - aws-cli/setup:
           profile-name: questo-circleci
+      - run:
+          name: "check if aws-iam-auth exists"
+          command: aws-iam-authenticator help
       - persist_to_workspace:
           root: .
           paths:
