@@ -39,58 +39,13 @@ module "eks" {
 
   workers_additional_policies = [aws_iam_policy.worker_policy.arn]
 
-  map_roles = [
-    {
-      "groups" : ["system:masters"],
-      "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks-admin-role}",
-      "username" : var.eks-admin
-    },
-    {
-      "groups" : ["system:masters"],
-      "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks-admin-role}",
-      "username" : "admin-dev"
-    },
-    {
-      "groups" : [""],
-      "rolearn" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.eks-developer-role}",
-      "username" : var.eks-developer
-    }
-  ]
-
   map_users = [
     {
-      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/admin-dev"
-      username = "admin-dev"
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.additional-eks-admin}"
+      username = var.additional-eks-admin
       groups   = ["system:masters"]
     },
   ]
-}
-
-resource "kubernetes_role" "eks-admin-role" {
-  metadata {
-    # this is eks role not aws role
-    name = "eks-admin-role"
-  }
-  rule {
-    api_groups = ["*"]
-    resources  = ["*"]
-    verbs      = ["*"]
-  }
-}
-
-resource "kubernetes_role_binding" "eks-admin-role-binding" {
-  metadata {
-    name = "eks-admin-role-binding"
-  }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "Role"
-    name      = var.eks-admin-role
-  }
-  subject {
-    kind = "ServiceAccount"
-    name = var.eks-admin
-  }
 }
 
 resource "aws_iam_policy" "worker_policy" {

@@ -11,24 +11,7 @@ variable "questo-infra-bucket" {
   default = "questo-infra"
 }
 
-variable "eks-admin" {
-  default = "eks-admin"
-  description = "aws eks admin username"
+variable "additional-eks-admin" {
+  default = "admin-dev"
+  description = "aws user name to add to eks auth config map"
 }
-
-variable "eks-developer" {
-  default = "eks-developer"
-  description = "aws eks developer username"
-}
-
-variable "eks-admin-role" {
-  default = "eks-admin-role"
-  description = "aws eks admin role "
-}
-
-variable "eks-developer-role" {
-  default = "eks-developer-role"
-  description = "aws eks developer role"
-}
-
-
