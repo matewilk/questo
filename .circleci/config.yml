@@ -15,6 +15,9 @@ jobs:
           paths:
             - .
   k8s-tf-plan:
+    parameters:
+      tf-dir:
+        type: string
     docker:
       - image: hashicorp/terraform:latest
     steps:
@@ -22,42 +25,48 @@ jobs:
           at: .
       - checkout
       - run: |
-          cd tf/k8s
+          cd << parameters.tf-dir >>
           terraform init -reconfigure -backend-config=dev.tfbackend
       - run: |
-          cd tf/k8s
+          cd << parameters.tf-dir >>
           terraform get
       - run:
           name: "Validate tf config"
           command: |
-            cd tf/k8s
+            cd << parameters.tf-dir >>
             terraform validate
       - run:
           name: "Run the plan"
           command: |
-            cd tf/k8s
+            cd << parameters.tf-dir >>
             terraform plan -out k8s-plan
       - persist_to_workspace:
           root: .
           paths:
             - .
   k8s-tf-apply:
+    parameters:
+      tf-dir:
+        type: string
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
       - run: |
-          cd tf/k8s
+          cd << parameters.tf-dir >>
           terraform apply k8s-plan
   k8s-tf-destroy:
+    parameters:
+      tf-dir:
+        type: string
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
       - run: |
-          cd tf/k8s
+          cd << parameters.tf-dir >>
           terraform destroy
 
   build:
@@ -114,6 +123,7 @@ workflows:
       - generate-aws-credentails:
           context: questo-dev-context
       - k8s-tf-plan:
+          tf-dir: tf/k8s
           context: questo-dev-context
           requires:
             - generate-aws-credentails
@@ -122,6 +132,7 @@ workflows:
           requires:
             - k8s-tf-plan
       - k8s-tf-apply:
+          tf-dir: tf/k8s
           context: questo-dev-context
           requires:
             - approve-k8s-tf-apply
@@ -130,6 +141,7 @@ workflows:
           requires:
             - k8s-tf-plan
       - k8s-tf-destroy:
+          tf-dir: tf/k8s
           context: questo-dev-context
           requires:
             - approve-k8s-tf-destroy
