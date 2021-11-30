@@ -2,8 +2,73 @@ version: 2.1
 
 orbs:
   node: circleci/node@4.7
+  aws-cli: circleci/aws-cli@2.0
 
 jobs:
+  generate-aws-credentails:
+    executor: aws-cli/default
+    steps:
+      - aws-cli/setup:
+          profile-name: questo-circleci
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  k8s-tf-plan:
+    parameters:
+      tf-dir:
+        type: string
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - checkout
+      - run: |
+          cd << parameters.tf-dir >>
+          terraform init -reconfigure -backend-config=dev.tfbackend
+      - run: |
+          cd << parameters.tf-dir >>
+          terraform get
+      - run:
+          name: "Validate tf config"
+          command: |
+            cd << parameters.tf-dir >>
+            terraform validate
+      - run:
+          name: "Run the plan"
+          command: |
+            cd << parameters.tf-dir >>
+            terraform plan -out k8s-plan
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  k8s-tf-apply:
+    parameters:
+      tf-dir:
+        type: string
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          cd << parameters.tf-dir >>
+          terraform apply k8s-plan
+  k8s-tf-destroy:
+    parameters:
+      tf-dir:
+        type: string
+    docker:
+      - image: hashicorp/terraform:latest
+    steps:
+      - attach_workspace:
+          at: .
+      - run: |
+          cd << parameters.tf-dir >>
+          terraform destroy
+
   build:
     docker:
       - image: cimg/node:16.10
@@ -22,10 +87,12 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: 'Run tests'
+          name: "Run tests"
           command: npm test
   build-image:
-    machine: true
+    machine:
+      image: ubuntu-2004:202111-01
+      docker_layer_caching: true
     steps:
       - attach_workspace:
           at: .
@@ -36,7 +103,9 @@ jobs:
           paths:
             - .
   push-image:
-    machine: true
+    machine:
+      image: ubuntu-2004:202111-01
+      docker_layer_caching: true
     steps:
       - attach_workspace:
           at: .
@@ -45,11 +114,43 @@ jobs:
       - run: docker push matewilk/questo-server-image-${ENV}
 
 workflows:
+  deploy-infra-dev:
+    when:
+      and:
+        - not:
+            equal: [master, << pipeline.git.branch >>]
+    jobs:
+      - generate-aws-credentails:
+          context: questo-dev-context
+      - k8s-tf-plan:
+          tf-dir: tf/k8s
+          context: questo-dev-context
+          requires:
+            - generate-aws-credentails
+      - approve-k8s-tf-apply:
+          type: approval
+          requires:
+            - k8s-tf-plan
+      - k8s-tf-apply:
+          tf-dir: tf/k8s
+          context: questo-dev-context
+          requires:
+            - approve-k8s-tf-apply
+      - approve-k8s-tf-destroy:
+          type: approval
+          requires:
+            - k8s-tf-plan
+      - k8s-tf-destroy:
+          tf-dir: tf/k8s
+          context: questo-dev-context
+          requires:
+            - approve-k8s-tf-destroy
+
   development:
     when:
       and:
         - not:
-            equal: [ master, << pipeline.git.branch >> ]
+            equal: [master, << pipeline.git.branch >>]
     jobs:
       - build
       - test:
@@ -67,9 +168,10 @@ workflows:
           context: questo-dev-context
           requires:
             - approve-push-image
+
   prod:
     when:
       and:
-        - equal: [ master, << pipeline.git.branch >> ]
+        - equal: [master, << pipeline.git.branch >>]
     jobs:
       - build

@@ -1,0 +1,3 @@
+bucket="questo-infra"
+key="tfstates/dev/eks/cluster.tfstate"
+region="eu-west-2"

@@ -1,14 +1,26 @@
-variable "env" {
-  default = "dev"
+provider "aws" {
+  region = var.region
 }
 
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  config_path = "./${data.local_file.kubeconfig.filename}"
 }
 
 resource "kubernetes_namespace" "app-namespace" {
+  depends_on = [data.local_file.kubeconfig]
   metadata {
     name = "questo-namespace-${var.env}"
+  }
+}
+
+resource "kubernetes_secret" "questo-server-secrets" {
+  metadata {
+    name      = "questo-server-secrets-${var.env}"
+    namespace = kubernetes_namespace.app-namespace.metadata.0.name
+  }
+
+  data = {
+    COOKIE_SESSION_SECRET = var.cookie_session_secret
   }
 }
 
@@ -42,6 +54,13 @@ resource "kubernetes_deployment" "questo-server" {
 
           port {
             container_port = 4000
+          }
+
+          env_from {
+            secret_ref {
+              optional = false
+              name     = kubernetes_secret.questo-server-secrets.metadata.0.name
+            }
           }
         }
       }

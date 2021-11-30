@@ -30,6 +30,7 @@ async function startApolloServer() {
   // body parse middleware
   app.use(express.json());
 
+  // healthcheck for k8s/eks/aws/target group
   app.get("/health", (req, res) => {
     res.status(200).send("service is healthy");
   });

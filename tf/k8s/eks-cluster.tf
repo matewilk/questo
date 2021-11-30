@@ -1,7 +1,3 @@
-variable "env" {
-  default = "dev"
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "17.23.0"
@@ -42,6 +38,14 @@ module "eks" {
   ]
 
   workers_additional_policies = [aws_iam_policy.worker_policy.arn]
+
+  map_users = [
+    {
+      userarn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:user/${var.additional-eks-admin}"
+      username = var.additional-eks-admin
+      groups   = ["system:masters"]
+    },
+  ]
 }
 
 resource "aws_iam_policy" "worker_policy" {
