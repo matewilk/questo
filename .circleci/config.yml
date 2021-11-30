@@ -17,6 +17,7 @@ jobs:
         default: "dev"
     executor: aws-cli/default
     steps:
+      - checkout
       - aws-cli/setup:
           profile-name: questo-circleci
       - run:
@@ -37,7 +38,6 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - checkout
       - run: |
           cd << parameters.tf-dir >>
           terraform init -reconfigure -backend-config=dev.tfbackend
