@@ -19,11 +19,11 @@ jobs:
     steps:
       - aws-cli/setup:
           profile-name: questo-circleci
-          run:
-            name: "download kubeconfig from s3"
-            command: |
-              cd << parameters.tf-dir >>
-              aws s3 cp s3://<< parameters.s3-bucket >>/<< parameters.env >>/eks/kubeconfig .
+      - run:
+          name: "download kubeconfig from s3"
+          command: |
+            cd << parameters.tf-dir >>
+            aws s3 cp s3://<< parameters.s3-bucket >>/<< parameters.env >>/eks/kubeconfig .
       - persist_to_workspace:
           root: .
           paths:
