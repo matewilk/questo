@@ -58,6 +58,33 @@ module "eks" {
   ]
 }
 
+resource "kubernetes_role" "eks-admin-role" {
+  metadata {
+    # this is eks role not aws role
+    name = "eks-admin-role"
+  }
+  rule {
+    api_groups = ["*"]
+    resources  = ["*"]
+    verbs      = ["*"]
+  }
+}
+
+resource "kubernetes_role_binding" "eks-admin-role-binding" {
+  metadata {
+    name = "eks-admin-role-binding"
+  }
+  role_ref {
+    api_group = ""
+    kind      = "Role"
+    name      = var.eks-developer-role
+  }
+  subject {
+    kind = "ServiceAccount"
+    name = var.eks-developer
+  }
+}
+
 resource "aws_iam_policy" "worker_policy" {
   name        = "aws-load-balancer-controller-iam-policy"
   description = "Worker policy for ALB Ingress"
