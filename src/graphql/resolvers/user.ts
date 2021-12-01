@@ -2,6 +2,7 @@ import shortid from "shortid";
 import { AuthenticationError } from "apollo-server";
 
 import { PutItem } from "../dataSource/questo";
+import { USER_PREFIX } from "../../constants";
 import { handleAuth, logout } from "../../helpers/passport-authentication";
 
 const mapItemToType = (item: PutItem) => ({
@@ -43,7 +44,7 @@ export default {
   Mutation: {
     createUser: async (_, { name, type }, { dataSources }) => {
       try {
-        const USR = `${process.env.USER_PREFIX}`;
+        const USR = `${USER_PREFIX}`;
         const ID = `${USR}_${shortid.generate()}`;
 
         await dataSources.questoSource.putRecord({

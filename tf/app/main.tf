@@ -21,6 +21,9 @@ resource "kubernetes_secret" "questo-server-secrets" {
 
   data = {
     COOKIE_SESSION_SECRET = var.cookie_session_secret
+    AWS_REGION = var.region
+    AWS_ACCESS_KEY_ID = var.aws_access_key_id
+    AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
   }
 }
 

@@ -1,5 +1,6 @@
 import shortid from "shortid";
 import { PutItem } from "../dataSource/questo";
+import { QUESTION_PREFIX } from "../../constants";
 
 const mapItemToType = (item: PutItem) => ({
   ID: item.ID,
@@ -24,7 +25,7 @@ export default {
           IndexName: "EntitiesIndex",
           KeyConditionExpression: "RecordType=:rtype",
           ExpressionAttributeValues: {
-            ":rtype": process.env.QUESTION_PREFIX,
+            ":rtype": QUESTION_PREFIX,
           },
           Limit: limit ? limit : 10,
           ExclusiveStartKey: cursor ? JSON.parse(fromCursorHash(cursor)) : null,
@@ -54,7 +55,7 @@ export default {
         const { ID } = args;
         const result = await dataSources.questoSource.getRecord({
           ID,
-          RecordType: `${process.env.QUESTION_PREFIX}`,
+          RecordType: `${QUESTION_PREFIX}`,
         });
 
         return mapItemToType(result);
@@ -71,7 +72,7 @@ export default {
       { dataSources }
     ) => {
       try {
-        const QUE = `${process.env.QUESTION_PREFIX}`;
+        const QUE = `${QUESTION_PREFIX}`;
         const ID = `${QUE}_${shortid.generate()}`;
 
         await dataSources.questoSource.putRecord({
@@ -99,7 +100,7 @@ export default {
       { dataSources }
     ) => {
       try {
-        const ANS = `${process.env.ANSWER_PREFIX}`;
+        const ANS = `${ANSWER_PREFIX}`;
         const ANS_ID = `${ANS}_${shortid.generate()}`;
         const currentDate = Date.now();
 

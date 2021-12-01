@@ -1,3 +1,4 @@
+import { ANSWER_PREFIX, QUESTION_PREFIX } from "../../constants";
 import questionResolver from "./question";
 
 jest.mock("shortid", () => {
@@ -138,7 +139,7 @@ describe("Question Resolver", () => {
       it("should call getRecord questoSource method and return question record", async () => {
         const args = {
           ID: "QUE_123",
-          RecordType: `${process.env.QUESTION_PREFIX}`,
+          RecordType: `${QUESTION_PREFIX}`,
         };
 
         const result = await Query.question(null, args, dataSourcesMock);
@@ -193,7 +194,7 @@ describe("Question Resolver", () => {
           dataSourcesMock.dataSources.questoSource.putRecord
         ).toHaveBeenCalledWith({
           ID: ID,
-          RecordType: `${process.env.QUESTION_PREFIX}`,
+          RecordType: `${QUESTION_PREFIX}`,
           text: "question text",
           score: 10,
           type: "test",
@@ -203,7 +204,7 @@ describe("Question Resolver", () => {
           dataSourcesMock.dataSources.questoSource.getRecord
         ).toHaveBeenCalledWith({
           ID: ID,
-          RecordType: `${process.env.QUESTION_PREFIX}`,
+          RecordType: `${QUESTION_PREFIX}`,
         });
         expect(result).toEqual({
           text: "getRecord item",
@@ -271,7 +272,7 @@ describe("Question Resolver", () => {
           dataSourcesMock.dataSources.questoSource.putRecord
         ).toHaveBeenCalledWith({
           ID: "ANS_987654321", // mocked shortid value
-          RecordType: `${process.env.ANSWER_PREFIX}`,
+          RecordType: `${ANSWER_PREFIX}`,
           text: "answer to question",
           score: 50,
           type: "boolean",

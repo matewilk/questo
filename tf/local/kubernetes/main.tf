@@ -158,9 +158,9 @@ resource "kubernetes_config_map" "questo_dynamodb_configmap" {
   data = {
     DB_URL = "http://${kubernetes_service.questo_dynamodb_service.metadata.0.name}:8000"
     DB_TABLE_NAME = "Questo"
-    DB_REGION = "local"
-    DB_ACCESS_KEY = "local"
-    DB_SECRET_ACCESS_KEY = "local"
+    AWS_REGION = "local"
+    AWS_ACCESS_KEY_ID = "local"
+    AWS_SECRET_ACCESS_KEY = "local"
     QUESTION_PREFIX = "QUE"
     ANSWER_PREFIX = "ANS"
     USER_PREFIX = "USR"
