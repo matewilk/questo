@@ -1,6 +1,6 @@
 import shortid from "shortid";
 import { PutItem } from "../dataSource/questo";
-import { QUESTION_PREFIX } from "../../constants";
+import { ANSWER_PREFIX, QUESTION_PREFIX } from "../../constants";
 
 const mapItemToType = (item: PutItem) => ({
   ID: item.ID,

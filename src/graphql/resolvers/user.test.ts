@@ -1,3 +1,4 @@
+import { USER_PREFIX } from "../../constants";
 import userResolver from "./user";
 
 jest.mock("shortid", () => {
@@ -92,7 +93,7 @@ describe("User Resolver", () => {
           dataSourcesMock.dataSources.questoSource.putRecord
         ).toHaveBeenCalledWith({
           ID: ID,
-          RecordType: `${process.env.USER_PREFIX}`,
+          RecordType: `${USER_PREFIX}`,
           text: "Bob Swarovski",
           score: 0,
           type: "USER",
@@ -103,7 +104,7 @@ describe("User Resolver", () => {
           dataSourcesMock.dataSources.questoSource.getRecord
         ).toHaveBeenCalledWith({
           ID: ID,
-          RecordType: `${process.env.USER_PREFIX}`,
+          RecordType: `${USER_PREFIX}`,
         });
 
         expect(result).toEqual({

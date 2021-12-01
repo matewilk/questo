@@ -1,5 +1,7 @@
-import Database from "../../db";
 import { DynamoDB } from "aws-sdk";
+
+import { USER_PREFIX } from "../../constants";
+import Database from "../../db";
 
 export interface PutItem {
   ID: string;
@@ -81,7 +83,7 @@ export default class QuestoSource {
   }
 
   async getUserById({ ID }: { ID: string }) {
-    return await this.getRecord({ ID, RecordType: process.env.USER_PREFIX });
+    return await this.getRecord({ ID, RecordType: USER_PREFIX });
   }
 
   async getUserByUsername({ username }: { username: string }) {
@@ -89,7 +91,7 @@ export default class QuestoSource {
       IndexName: "TextIndex",
       KeyConditionExpression: "RecordType=:rtype AND #text=:text",
       ExpressionAttributeValues: {
-        ":rtype": process.env.USER_PREFIX,
+        ":rtype": USER_PREFIX,
         ":text": username,
       },
       ExpressionAttributeNames: {

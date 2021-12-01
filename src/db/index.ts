@@ -8,9 +8,9 @@ export default class Database {
         endpoint:
           process.env.DB_URL ||
           `https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`,
-        region: process.env.AWS_REGION,
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION || "local",
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "local",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "local",
       };
 
       this._connection = new AWS.DynamoDB.DocumentClient(params);
