@@ -30,7 +30,7 @@ describe("Database", () => {
 
   it("should connect to db driver successfully", () => {
     expect(AWS.DynamoDB.DocumentClient).toHaveBeenCalledWith({
-      endpoint: "`https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`",
+      endpoint: `https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`,
       region: "local",
       accessKeyId: "local",
       secretAccessKey: "local",
