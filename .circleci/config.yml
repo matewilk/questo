@@ -300,10 +300,14 @@ workflows:
       - test:
           requires:
             - build
+      - approve-build-image:
+          type: approval
+          requires:
+            - test
       - build-image:
           context: questo-dev-context
           requires:
-            - test
+            - approve-build-image
       - approve-push-image:
           type: approval
           requires:
