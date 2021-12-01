@@ -4,26 +4,80 @@ orbs:
   node: circleci/node@4.7
   aws-cli: circleci/aws-cli@2.0
 
+commands:
+  install-aws-iam-authenticator:
+    steps:
+      - run:
+          name: "Install curl"
+          command: apk add --no-cache curl
+      - run:
+          # aws-iam-auth is used to read eks config file
+          # in the /tf/app workflow as they require external
+          # kubeconfig file from s3 bucket
+          name: "Install aws-iam-authenticator"
+          command: |
+            cd ../..
+            curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+            chmod +x ./aws-iam-authenticator
+            mv ./aws-iam-authenticator /usr/local/bin
+            aws-iam-authenticator help
+  download-kubeconfig-s3:
+    parameters:
+      tf-dir:
+        type: string
+      s3-bucket:
+        type: string
+      env:
+        type: string
+    steps:
+      - run:
+          name: "download kubeconfig from s3"
+          command: |
+            cd << parameters.tf-dir >>
+            aws s3 cp s3://<< parameters.s3-bucket >>/<< parameters.env >>/eks/kubeconfig .
+
 jobs:
   generate-aws-credentails:
+    parameters:
+      tf-dir:
+        type: string
+      s3-bucket:
+        type: string
+        default: "questo-infra"
+      env:
+        type: string
+        default: "dev"
+      download-kubeconfig:
+        type: boolean
+        default: false
     executor: aws-cli/default
     steps:
+      - checkout
       - aws-cli/setup:
           profile-name: questo-circleci
+      - when:
+          condition: << parameters.download-kubeconfig >>
+          steps:
+            - download-kubeconfig-s3:
+                tf-dir: << parameters.tf-dir >>
+                s3-bucket: << parameters.s3-bucket >>
+                env: << parameters.env >>
       - persist_to_workspace:
           root: .
           paths:
             - .
-  k8s-tf-plan:
+  terraform-plan:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
-      - checkout
       - run: |
           cd << parameters.tf-dir >>
           terraform init -reconfigure -backend-config=dev.tfbackend
@@ -35,39 +89,57 @@ jobs:
           command: |
             cd << parameters.tf-dir >>
             terraform validate
+      - when:
+          condition: << parameters.aws-iam-auth >>
+          steps:
+            - install-aws-iam-authenticator
       - run:
           name: "Run the plan"
           command: |
             cd << parameters.tf-dir >>
-            terraform plan -out k8s-plan
+            terraform plan -out tfplan
       - persist_to_workspace:
           root: .
           paths:
             - .
-  k8s-tf-apply:
+  terraform-apply:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
+      - when:
+          condition: << parameters.aws-iam-auth >>
+          steps:
+            - install-aws-iam-authenticator
       - run: |
           cd << parameters.tf-dir >>
-          terraform apply k8s-plan
-  k8s-tf-destroy:
+          terraform apply tfplan
+  terraform-destroy:
     parameters:
       tf-dir:
         type: string
+      aws-iam-auth:
+        type: boolean
+        default: false
     docker:
       - image: hashicorp/terraform:latest
     steps:
       - attach_workspace:
           at: .
+      - when:
+          condition: << parameters.aws-iam-auth >>
+          steps:
+            - install-aws-iam-authenticator
       - run: |
           cd << parameters.tf-dir >>
-          terraform destroy
+          terraform destroy --auto-approve
 
   build:
     docker:
@@ -121,30 +193,67 @@ workflows:
             equal: [master, << pipeline.git.branch >>]
     jobs:
       - generate-aws-credentails:
+          tf-dir: tf/k8s
           context: questo-dev-context
-      - k8s-tf-plan:
+      - terraform-plan:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
             - generate-aws-credentails
-      - approve-k8s-tf-apply:
+      - approve-terraform-apply:
           type: approval
           requires:
-            - k8s-tf-plan
-      - k8s-tf-apply:
+            - terraform-plan
+      - terraform-apply:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
-            - approve-k8s-tf-apply
-      - approve-k8s-tf-destroy:
+            - approve-terraform-apply
+      - approve-terraform-destroy:
           type: approval
           requires:
-            - k8s-tf-plan
-      - k8s-tf-destroy:
+            - terraform-plan
+      - terraform-destroy:
           tf-dir: tf/k8s
           context: questo-dev-context
           requires:
-            - approve-k8s-tf-destroy
+            - approve-terraform-destroy
+  deploy-app-dev:
+    when:
+      and:
+        - not:
+            equal: [master, << pipeline.git.branch >>]
+    jobs:
+      - generate-aws-credentails:
+          tf-dir: tf/app
+          download-kubeconfig: true
+          context: questo-dev-context
+      - terraform-plan:
+          tf-dir: tf/app
+          aws-iam-auth: true
+          context: questo-dev-context
+          requires:
+            - generate-aws-credentails
+      - approve-terraform-apply:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-apply:
+          tf-dir: tf/app
+          aws-iam-auth: true
+          context: questo-dev-context
+          requires:
+            - approve-terraform-apply
+      - approve-terraform-destroy:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-destroy:
+          tf-dir: tf/app
+          aws-iam-auth: true
+          context: questo-dev-context
+          requires:
+            - approve-terraform-destroy
 
   development:
     when:
