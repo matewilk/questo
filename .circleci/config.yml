@@ -73,6 +73,9 @@ jobs:
       aws-iam-auth:
         type: boolean
         default: false
+      env:
+        type: string
+        default: "dev"
     docker:
       - image: hashicorp/terraform:latest
     steps:
@@ -80,7 +83,7 @@ jobs:
           at: .
       - run: |
           cd << parameters.tf-dir >>
-          terraform init -reconfigure -backend-config=dev.tfbackend
+          terraform init -reconfigure -backend-config=<< parameters.env >>.tfbackend
       - run: |
           cd << parameters.tf-dir >>
           terraform get
