@@ -161,9 +161,6 @@ resource "kubernetes_config_map" "questo_dynamodb_configmap" {
     AWS_REGION = "local"
     AWS_ACCESS_KEY_ID = "local"
     AWS_SECRET_ACCESS_KEY = "local"
-    QUESTION_PREFIX = "QUE"
-    ANSWER_PREFIX = "ANS"
-    USER_PREFIX = "USR"
   }
 }
 
