@@ -1,5 +1,6 @@
 import shortid from "shortid";
 import { PutItem } from "../dataSource/questo";
+import { ANSWER_PREFIX } from "../../constants";
 
 const mapItemToType = (item: PutItem) => ({
   ID: item.ID,
@@ -32,7 +33,7 @@ export default {
   Mutation: {
     createAnswer: async (parent, { text, score, type }, { dataSources }) => {
       try {
-        const ANS = `${process.env.ANSWER_PREFIX}`;
+        const ANS = `${ANSWER_PREFIX}`;
         const ID = `${ANS}_${shortid.generate()}`;
 
         await dataSources.questoSource.putRecord({

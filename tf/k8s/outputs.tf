@@ -32,3 +32,13 @@ output "cluster_name" {
   description = "Kubernetes Cluster Name"
   value       = local.cluster_name
 }
+
+output "vpc_id" {
+  description = "VPC ID"
+  value = module.vpc.vpc_id
+}
+
+output "vpc_main_route_table_id" {
+  description = "VPC route table id"
+  value = module.vpc.vpc_main_route_table_id
+}

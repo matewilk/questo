@@ -73,6 +73,9 @@ jobs:
       aws-iam-auth:
         type: boolean
         default: false
+      env:
+        type: string
+        default: "dev"
     docker:
       - image: hashicorp/terraform:latest
     steps:
@@ -80,7 +83,7 @@ jobs:
           at: .
       - run: |
           cd << parameters.tf-dir >>
-          terraform init -reconfigure -backend-config=dev.tfbackend
+          terraform init -reconfigure -backend-config=<< parameters.env >>.tfbackend
       - run: |
           cd << parameters.tf-dir >>
           terraform get
@@ -218,6 +221,38 @@ workflows:
           context: questo-dev-context
           requires:
             - approve-terraform-destroy
+  deploy-dynamodb-dev:
+    when:
+      and:
+        - not:
+            equal: [ master, << pipeline.git.branch >> ]
+    jobs:
+      - generate-aws-credentails:
+          tf-dir: tf/dynamodb
+          context: questo-dev-context
+      - terraform-plan:
+          tf-dir: tf/dynamodb
+          context: questo-dev-context
+          requires:
+            - generate-aws-credentails
+      - approve-terraform-apply:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-apply:
+          tf-dir: tf/dynamodb
+          context: questo-dev-context
+          requires:
+            - approve-terraform-apply
+      - approve-terraform-destroy:
+          type: approval
+          requires:
+            - terraform-plan
+      - terraform-destroy:
+          tf-dir: tf/dynamodb
+          context: questo-dev-context
+          requires:
+            - approve-terraform-destroy
   deploy-app-dev:
     when:
       and:
@@ -265,10 +300,14 @@ workflows:
       - test:
           requires:
             - build
+      - approve-build-image:
+          type: approval
+          requires:
+            - test
       - build-image:
           context: questo-dev-context
           requires:
-            - test
+            - approve-build-image
       - approve-push-image:
           type: approval
           requires:

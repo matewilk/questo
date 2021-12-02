@@ -1,0 +1,3 @@
+bucket="questo-infra"
+key="tfstates/dev/dynamodb/ddb.tfstate"
+region="eu-west-2"

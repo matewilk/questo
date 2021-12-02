@@ -40,7 +40,7 @@ services:
         # or ${DB_MINIKUBE_URL} - depending on where you run (use when building image)
         - DYNAMODB_URL=${DB_URL}
         # or ${AWS_REGION}
-        - AWS_REGION=${DB_REGION}
+        - AWS_REGION=${AWS_REGION}
     environment:
       # this is needed to fool aws cli
       # that you've set up credentials

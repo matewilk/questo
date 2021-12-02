@@ -5,10 +5,12 @@ export default class Database {
   async connect() {
     if (!this._connection) {
       const params = {
-        endpoint: process.env.DB_URL,
-        region: process.env.DB_REGION,
-        accessKeyId: process.env.DB_ACCESS_KEY,
-        secretAccessKey: process.env.DB_SECRET_ACCESS_KEY,
+        endpoint:
+          process.env.DB_URL ||
+          `https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`,
+        region: process.env.AWS_REGION || "local",
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || "local",
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "local",
       };
 
       this._connection = new AWS.DynamoDB.DocumentClient(params);

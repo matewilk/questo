@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 
+import { USER_PREFIX } from "../../constants";
 import QuestoSource, { PutItem, GetItem, Query } from "./questo";
 import Database from "../../db";
 
@@ -93,7 +94,7 @@ describe("QuestoSource", () => {
     questoSource.getRecord = jest.fn();
     const ID = "123";
     const params = { ID };
-    const USR = process.env.USER_PREFIX;
+    const USR = USER_PREFIX;
 
     await questoSource.getUserById(params);
 
@@ -115,7 +116,7 @@ describe("QuestoSource", () => {
       IndexName: "TextIndex",
       KeyConditionExpression: "RecordType=:rtype AND #text=:text",
       ExpressionAttributeValues: {
-        ":rtype": process.env.USER_PREFIX,
+        ":rtype": USER_PREFIX,
         ":text": username,
       },
       ExpressionAttributeNames: {

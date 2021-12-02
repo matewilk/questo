@@ -1,3 +1,4 @@
+import { ANSWER_PREFIX } from "../../constants";
 import answerResolver from "./answer";
 
 jest.mock("shortid", () => {
@@ -109,7 +110,7 @@ describe("Answer Resolver", () => {
         dataSourcesMock.dataSources.questoSource.putRecord
       ).toHaveBeenCalledWith({
         ID,
-        RecordType: `${process.env.ANSWER_PREFIX}`,
+        RecordType: `${ANSWER_PREFIX}`,
         text: "answer to question",
         score: 20,
         type: "boolean",
@@ -119,7 +120,7 @@ describe("Answer Resolver", () => {
         dataSourcesMock.dataSources.questoSource.getRecord
       ).toHaveBeenCalledWith({
         ID,
-        RecordType: `${process.env.ANSWER_PREFIX}`,
+        RecordType: `${ANSWER_PREFIX}`,
       });
       expect(result).toEqual({
         ID,
