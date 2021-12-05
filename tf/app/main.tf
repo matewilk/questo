@@ -3,11 +3,12 @@ provider "aws" {
 }
 
 provider "kubernetes" {
-  config_path = "./${data.local_file.kubeconfig.filename}"
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 }
 
 resource "kubernetes_namespace" "app-namespace" {
-  depends_on = [data.local_file.kubeconfig]
   metadata {
     name = "questo-namespace-${var.env}"
   }
@@ -21,10 +22,10 @@ resource "kubernetes_secret" "questo-server-secrets" {
 
   data = {
     COOKIE_SESSION_SECRET = var.cookie_session_secret
-    AWS_REGION = var.region
-    AWS_ACCESS_KEY_ID = var.aws_access_key_id
+    AWS_REGION            = var.region
+    AWS_ACCESS_KEY_ID     = var.aws_access_key_id
     AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
-    DB_TABLE_NAME = var.db_table_name
+    DB_TABLE_NAME         = var.db_table_name
   }
 }
 
@@ -117,4 +118,8 @@ resource "kubernetes_ingress" "questo-server-ingress" {
       }
     }
   }
+}
+
+output "load_balancer_hostname" {
+  value = kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname
 }
