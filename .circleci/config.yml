@@ -261,11 +261,9 @@ workflows:
     jobs:
       - generate-aws-credentails:
           tf-dir: tf/app
-          download-kubeconfig: true
           context: questo-dev-context
       - terraform-plan:
           tf-dir: tf/app
-          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - generate-aws-credentails
@@ -275,7 +273,6 @@ workflows:
             - terraform-plan
       - terraform-apply:
           tf-dir: tf/app
-          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - approve-terraform-apply
@@ -285,7 +282,6 @@ workflows:
             - terraform-plan
       - terraform-destroy:
           tf-dir: tf/app
-          aws-iam-auth: true
           context: questo-dev-context
           requires:
             - approve-terraform-destroy
