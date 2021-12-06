@@ -125,5 +125,5 @@ output "load_balancer_hostname" {
 }
 
 output "load_balancer_name" {
-  value = kubernetes_ingress.questo-server-ingress.metadata.0.name
+  value = lookup(kubernetes_ingress.questo-server-ingress.metadata.0.annotations, "alb.ingress.kubernetes.io/load-balancer-name")
 }
