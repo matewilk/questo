@@ -84,7 +84,7 @@ resource "kubernetes_service" "questo-server-service" {
     }
 
     port {
-      port        = 80
+      port        = 4000
       target_port = 4000
     }
     type = "NodePort"
@@ -112,7 +112,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
           path = "/*"
           backend {
             service_name = kubernetes_service.questo-server-service.metadata.0.name
-            service_port = 80
+            service_port = 4000
           }
         }
       }
