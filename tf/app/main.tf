@@ -111,7 +111,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     rule {
       http {
         path {
-          path = "/graphql"
+          path = "/*"
           backend {
             service_name = kubernetes_service.questo-server-service.metadata.0.name
             service_port = 4000
@@ -123,7 +123,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
 }
 
 output "load_balancer_hostname" {
-  value = kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname
+  value = "${kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname}:4000"
 }
 
 output "load_balancer_name" {
