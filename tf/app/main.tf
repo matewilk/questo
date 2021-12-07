@@ -125,7 +125,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
 }
 
 output "load_balancer_hostname" {
-  value = "${kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname}:4000"
+  value = "http://${kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname}:4000"
 }
 
 output "load_balancer_name" {
