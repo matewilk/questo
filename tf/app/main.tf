@@ -113,7 +113,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     rule {
       http {
         path {
-          path = "/*"
+          path = "/api"
           backend {
             service_name = kubernetes_service.questo-server-service.metadata.0.name
             service_port = 4000
