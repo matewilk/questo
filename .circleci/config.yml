@@ -21,20 +21,6 @@ commands:
             chmod +x ./aws-iam-authenticator
             mv ./aws-iam-authenticator /usr/local/bin
             aws-iam-authenticator help
-  download-kubeconfig-s3:
-    parameters:
-      tf-dir:
-        type: string
-      s3-bucket:
-        type: string
-      env:
-        type: string
-    steps:
-      - run:
-          name: "download kubeconfig from s3"
-          command: |
-            cd << parameters.tf-dir >>
-            aws s3 cp s3://<< parameters.s3-bucket >>/<< parameters.env >>/eks/kubeconfig .
 
 jobs:
   generate-aws-credentails:
@@ -47,21 +33,11 @@ jobs:
       env:
         type: string
         default: "dev"
-      download-kubeconfig:
-        type: boolean
-        default: false
     executor: aws-cli/default
     steps:
       - checkout
       - aws-cli/setup:
           profile-name: questo-circleci
-      - when:
-          condition: << parameters.download-kubeconfig >>
-          steps:
-            - download-kubeconfig-s3:
-                tf-dir: << parameters.tf-dir >>
-                s3-bucket: << parameters.s3-bucket >>
-                env: << parameters.env >>
       - persist_to_workspace:
           root: .
           paths:
