@@ -37,7 +37,7 @@ services:
       args:
         # these env vars (e.g .env file)
         - ADMIN_PASSWD=${ADMIN_PASSWD}
-        # or ${DB_MINIKUBE_URL} - depending on where you run (use when building image)
+        # or depending on where you run the url might differ (local, dockerised, minikube etc)
         - DYNAMODB_URL=${DB_URL}
         # or ${AWS_REGION}
         - AWS_REGION=${AWS_REGION}

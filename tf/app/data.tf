@@ -1,14 +1,17 @@
-data "aws_s3_bucket_object" "kube_config" {
-  bucket = var.questo-infra-bucket
-  key    = "${var.env}/eks/kubeconfig"
+data "terraform_remote_state" "cluster" {
+  backend = "s3"
+  config = {
+    encrypt = true
+    bucket  = var.questo-infra-bucket
+    region  = var.region
+    key     = "tfstates/${var.env}/eks/cluster.tfstate"
+  }
 }
 
-resource "local_file" "kubeconfig" {
-  content  = data.aws_s3_bucket_object.kube_config.body
-  filename = "kubeconfig"
+data "aws_eks_cluster" "cluster" {
+  name = data.terraform_remote_state.cluster.outputs.cluster_name
 }
 
-data "local_file" "kubeconfig" {
-  depends_on = [local_file.kubeconfig]
-  filename   = "kubeconfig"
+data "aws_eks_cluster_auth" "cluster" {
+  name = data.terraform_remote_state.cluster.outputs.cluster_name
 }
