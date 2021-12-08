@@ -32,5 +32,4 @@ resource "helm_release" "aws-load-balancer-controller" {
     name  = "image.tag"
     value = "v2.3.0"
   }
-
 }
