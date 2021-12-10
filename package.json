@@ -16,6 +16,7 @@
   "dependencies": {
     "@babel/node": "^7.15.8",
     "@babel/preset-env": "^7.15.8",
+    "@graphql-tools/schema": "^8.3.1",
     "apollo-server": "^3.4.1",
     "apollo-server-express": "^3.4.0",
     "aws-sdk": "^2.1007.0",
@@ -23,9 +24,11 @@
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "graphql": "^15.6.1",
+    "graphql-subscriptions": "^2.0.0",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
-    "shortid": "^2.2.16"
+    "shortid": "^2.2.16",
+    "subscriptions-transport-ws": "^0.11.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.15.0",

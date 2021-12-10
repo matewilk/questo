@@ -17,7 +17,7 @@ services:
   # dynamodb instance for local development
   dynamodb:
     container_name: questo_dynamodb
-    hostname: questo_dynamodb
+    hostname: dynamodb
     image: amazon/dynamodb-local:latest
     ports:
       - "8000:8000"
@@ -30,6 +30,8 @@ services:
 
   # dynamodb script creating table in the local instance of dynamodb
   dynamodb_create_table:
+    depends_on:
+      - dynamodb
     container_name: dynamodb_create_table
     build:
       context: ./docker/dynamodb

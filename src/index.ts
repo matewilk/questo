@@ -3,8 +3,14 @@ import session from "express-session";
 import passport from "passport";
 
 import { ApolloServer } from "apollo-server-express";
-import schema from "./graphql/schema";
+import typeDefs from "./graphql/schema";
 import dotenv from "dotenv";
+
+import { createServer } from "http";
+import { execute, subscribe } from "graphql";
+import { SubscriptionServer } from "subscriptions-transport-ws";
+import { makeExecutableSchema } from "@graphql-tools/schema";
+import { PubSub } from "graphql-subscriptions";
 
 import resolvers from "./graphql/resolvers";
 import QuestoSource from "./graphql/dataSource/questo";
@@ -27,6 +33,8 @@ dotenv.config();
 async function startApolloServer() {
   const questoSource = new QuestoSource();
   const app = express();
+  const httpServer = createServer(app);
+  const pubSub = new PubSub();
   // body parse middleware
   app.use(express.json());
 
@@ -52,9 +60,21 @@ async function startApolloServer() {
   app.use(passport.session());
   passportConfig(questoSource);
 
+  const schema = makeExecutableSchema({ typeDefs, resolvers });
+
   const server = new ApolloServer({
-    typeDefs: schema,
-    resolvers,
+    schema,
+    plugins: [
+      {
+        async ServerWillStart() {
+          return {
+            async drainServer() {
+              subscriptionServer.close();
+            },
+          };
+        },
+      },
+    ],
     context: ({ req, res }) => {
       return {
         // user is added to req by passport.js
@@ -62,6 +82,8 @@ async function startApolloServer() {
         user: req.user,
         req,
         res,
+        // subscription solution
+        pubSub,
       };
     },
     dataSources: (): DataSources => {
@@ -74,7 +96,23 @@ async function startApolloServer() {
   await server.start();
   server.applyMiddleware({ app, path: "/" });
 
-  await new Promise((resolve) => app.listen({ port: 4000 }, resolve));
+  const subscriptionServer = SubscriptionServer.create(
+    {
+      schema,
+      execute,
+      subscribe,
+      onConnect(connectionParams, webSocket, context) {
+        console.log("Connected!");
+        return { pubSub };
+      },
+      onDisconnect(webSocket, context) {
+        console.log("Disconnected!");
+      },
+    },
+    { server: httpServer, path: "/" }
+  );
+
+  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
