@@ -59,8 +59,10 @@ async function startApolloServer() {
 
   const server = await apolloConfig(app, questoSource, httpServer, redisPubSub);
 
-  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+  const PORT = 4000;
+  await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+  console.log(`🚀 Query endpoint ready at http://localhost:${PORT}${server.graphqlPath}`);
+  console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}${server.graphqlPath}`)
 }
 
 startApolloServer();
