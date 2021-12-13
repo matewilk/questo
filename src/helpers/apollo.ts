@@ -6,8 +6,14 @@ import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
 import { Server } from "http";
 import { Express } from "express";
+import QuestoSource from "../graphql/dataSource/questo";
 
-export default async (app: Express, httpServer: Server, redisPubSub: any) => {
+export default async (
+  app: Express,
+  questoSource: QuestoSource,
+  httpServer: Server,
+  redisPubSub: any
+) => {
   const schema = makeExecutableSchema({ typeDefs, resolvers });
 
   const server = new ApolloServer({

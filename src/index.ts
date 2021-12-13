@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import { createServer } from "http";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 
-import apolloConfig from "./helpers/apollo"
+import apolloConfig from "./helpers/apollo";
 import QuestoSource from "./graphql/dataSource/questo";
 import { passportConfig } from "./helpers/passport-authentication";
 import expressSessionRedis from "./helpers/express-session-redis";
@@ -57,7 +57,7 @@ async function startApolloServer() {
   app.use(passport.session());
   passportConfig(questoSource);
 
-  const server = await apolloConfig(app, httpServer, redisPubSub)
+  const server = await apolloConfig(app, questoSource, httpServer, redisPubSub);
 
   await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
