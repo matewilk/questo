@@ -9,5 +9,15 @@ resource "helm_release" "redis-chart" {
     name  = "master.containerPort"
     value = "6379"
   }
+
+  set {
+    name  = "master.extraEnvVars"
+    value = ["ALLOW_EMPTY_PASSWORD=true"]
+  }
+
+  set {
+    name  = "replica.replicaCount"
+    value = "2"
+  }
 }
 
