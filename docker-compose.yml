@@ -2,6 +2,8 @@ version: "3"
 
 services:
   server:
+    depends_on:
+      - redis
     container_name: questo_server
     build:
       context: .
@@ -14,6 +16,21 @@ services:
     networks:
       - questo_network
 
+  # redis for managing graphql subscriptions and sessions
+  redis:
+    container_name: questo_redis
+    image: bitnami/redis:latest
+    ports:
+      - "6379:6379"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    command: /opt/bitnami/scripts/redis/run.sh --maxmemory 100mb
+    # mount volume to persist data after docker is stopped
+    volumes:
+      - ./.redis-data/:/bitnami/redis/data
+    networks:
+      - questo_network
+
   # dynamodb instance for local development
   dynamodb:
     container_name: questo_dynamodb
@@ -23,10 +40,10 @@ services:
       - "8000:8000"
     # use -inMemory to store data in mem instead of in files (-dbPath)
     command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-dbPath", "/data"]
+    volumes:
+      - ./.db-data/:/data
     networks:
       - questo_network
-    volumes:
-      - ./.db-files/:/data
 
   # dynamodb script creating table in the local instance of dynamodb
   dynamodb_create_table:

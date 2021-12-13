@@ -15,4 +15,7 @@ node_modules
 build
 
 # local dynamodb
-.db-files
+.db-data
+
+# local redis
+.redis-data
