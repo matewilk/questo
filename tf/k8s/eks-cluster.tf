@@ -18,7 +18,7 @@ module "eks" {
 
   worker_groups = [
     {
-      name                          = "worker-group-1"
+      name                          = "worker-group-one"
       instance_type                 = "t2.medium"
       additional_userdata           = "echo foo worker1"
       additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
