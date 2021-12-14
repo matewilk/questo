@@ -34,8 +34,18 @@ resource "helm_release" "redis-chart" {
   }
 
   set {
+    name  = "master.persistence.size"
+    value = "1Gi"
+  }
+
+  set {
     name  = "replica.extraEnvVars"
     value = yamlencode(var.extraEnvVars)
+  }
+
+  set {
+    name  = "replica.persistence.size"
+    value = "1Gi"
   }
 
   set {
