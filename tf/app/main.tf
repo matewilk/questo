@@ -26,7 +26,7 @@ resource "kubernetes_secret" "questo-server-secrets" {
     AWS_ACCESS_KEY_ID     = var.aws_access_key_id
     AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
     DB_TABLE_NAME         = var.db_table_name
-    REDIS_HOST            = data.kubernetes_service.redis-master.metadata.0.name
+    REDIS_HOST            = data.kubernetes_service.redis-master.spec.0.cluster_ip
     REDIS_PORT            = data.kubernetes_service.redis-master.spec.0.port.0.port
   }
 }
