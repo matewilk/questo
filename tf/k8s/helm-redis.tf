@@ -24,6 +24,16 @@ resource "helm_release" "redis-chart" {
   }
 
   set {
+    name = "master.service.type"
+    value = "NodePort"
+  }
+
+  set {
+    name = "master.service.nodePort"
+    value = "6379"
+  }
+
+  set {
     name  = "master.containerPort"
     value = "6379"
   }
