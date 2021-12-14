@@ -15,3 +15,10 @@ data "aws_eks_cluster" "cluster" {
 data "aws_eks_cluster_auth" "cluster" {
   name = data.terraform_remote_state.cluster.outputs.cluster_name
 }
+
+data "kubernetes_service" "redis-master" {
+  metadata {
+    name      = "redis-${var.env}-master"
+    namespace = "redis"
+  }
+}
