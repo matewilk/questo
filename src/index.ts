@@ -42,13 +42,13 @@ async function startApolloServer() {
     publisher: new Redis(redisOptions),
     subscriber: new Redis(redisOptions),
   });
+  // setup redis (for express-session)
+  expressSessionRedis(app, redisOptions);
   // setup authentication (express-session)
   const questoSource = new QuestoSource();
   app.use(passport.initialize());
   app.use(passport.session());
   passportConfig(questoSource);
-  // setup redis (for express-session)
-  expressSessionRedis(app, redisOptions);
 
   // ** http(s) server setup **
   const httpServer = setHttpServer(app);
