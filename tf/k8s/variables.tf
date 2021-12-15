@@ -12,6 +12,6 @@ variable "questo-infra-bucket" {
 }
 
 variable "additional-eks-admin" {
-  default = "admin-dev"
+  default     = "admin-dev"
   description = "aws user name to add to eks auth config map"
 }

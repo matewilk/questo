@@ -1,14 +1,15 @@
 import express from "express";
-import session from "express-session";
 import passport from "passport";
-
-import { ApolloServer } from "apollo-server-express";
-import schema from "./graphql/schema";
+import Redis from "ioredis";
 import dotenv from "dotenv";
 
-import resolvers from "./graphql/resolvers";
+import { createServer } from "http";
+import { RedisPubSub } from "graphql-redis-subscriptions";
+
+import apolloConfig from "./helpers/apollo";
 import QuestoSource from "./graphql/dataSource/questo";
 import { passportConfig } from "./helpers/passport-authentication";
+import expressSessionRedis from "./helpers/express-session-redis";
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ dotenv.config();
 async function startApolloServer() {
   const questoSource = new QuestoSource();
   const app = express();
+  const httpServer = createServer(app);
+
   // body parse middleware
   app.use(express.json());
 
@@ -35,47 +38,31 @@ async function startApolloServer() {
     res.status(200).send("service is healthy");
   });
 
-  app.use(
-    session({
-      name: "questo.sess",
-      secret: process.env.COOKIE_SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: process.env.ENVIRONMENT === "production",
-        httpOnly: false,
-      },
-    })
-  );
+  // Redis options for both PubSub (graphql subscriptions) and express-session
+  const redisOptions = {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT as unknown as number,
+  };
+
+  // setup Redis PubSub (graphql subscriptions) bus
+  const redisPubSub = new RedisPubSub({
+    publisher: new Redis(redisOptions),
+    subscriber: new Redis(redisOptions),
+  });
+
+  // setup express-session (with redis)
+  expressSessionRedis(app, redisOptions);
 
   app.use(passport.initialize());
   app.use(passport.session());
   passportConfig(questoSource);
 
-  const server = new ApolloServer({
-    typeDefs: schema,
-    resolvers,
-    context: ({ req, res }) => {
-      return {
-        // user is added to req by passport.js
-        // when deserialized properly
-        user: req.user,
-        req,
-        res,
-      };
-    },
-    dataSources: (): DataSources => {
-      return {
-        questoSource,
-      };
-    },
-  });
+  const server = await apolloConfig(app, questoSource, httpServer, redisPubSub);
 
-  await server.start();
-  server.applyMiddleware({ app, path: "/" });
-
-  await new Promise((resolve) => app.listen({ port: 4000 }, resolve));
-  console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
+  const PORT = 4000;
+  await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
+  console.log(`🚀 Query endpoint ready at http://localhost:${PORT}${server.graphqlPath}`);
+  console.log(`🚀 Subscription endpoint ready at ws://localhost:${PORT}${server.graphqlPath}`)
 }
 
 startApolloServer();
