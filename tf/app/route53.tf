@@ -26,7 +26,7 @@ data "aws_route53_zone" "questo" {
 
 resource "aws_acm_certificate" "cert" {
   domain_name               = "questo.live"
-  subject_alternative_names = [data.aws_alb.questo-alb.dns_name, "${var.env}.questo.live"]
+  subject_alternative_names = ["${var.env}.questo.live"]
   validation_method         = "DNS"
 
   tags = {
