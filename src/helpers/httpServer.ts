@@ -12,10 +12,12 @@ interface Config {
   [key: string]: HttpConfig;
 }
 
+// currently ssl: true is not in use
+// it's handled by AWS ALB (see tf/app/main.tf)
 export default (app: Express) => {
   const configurations: Config = {
     development: { ssl: false, port: 4000, hostname: "localhost " },
-    production: { ssl: true, port: 443, hostname: "production" },
+    production: { ssl: false, port: 443, hostname: "production" },
   };
 
   const environment: string = process.env.NODE_ENV || "production";
