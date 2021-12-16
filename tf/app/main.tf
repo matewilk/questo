@@ -105,10 +105,11 @@ resource "kubernetes_ingress" "questo-server-ingress" {
       "alb.ingress.kubernetes.io/group.order"        = "999"
       "alb.ingress.kubernetes.io/target-type"        = "ip"
       "alb.ingress.kubernetes.io/scheme"             = "internet-facing"
-      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTPS\": 443}, {\"HTTP\": 4000}]"
+#      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTPS\": 443}, {\"HTTP\": 4000}]"
+      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTP\": 4000}]"
       "alb.ingress.kubernetes.io/healthcheck-path"   = "/health"
       "alb.ingress.kubernetes.io/healthcheck-port"   = "traffic-port"
-      "alb.ingress.kubernetes.io/certificate-arn"    = aws_acm_certificate_validation.questo.certificate_arn
+#      "alb.ingress.kubernetes.io/certificate-arn"    = aws_acm_certificate_validation.questo.certificate_arn
     }
   }
 
