@@ -7,28 +7,40 @@ data "aws_route53_zone" "questo" {
   private_zone = false
 }
 
-module "acm" {
-  source  = "terraform-aws-modules/acm/aws"
-  version = "3.2.1"
+#module "acm" {
+#  source  = "terraform-aws-modules/acm/aws"
+#  version = "3.2.1"
+#
+#  create_certificate = true
+#
+#  domain_name               = "questo.live"
+#  subject_alternative_names = [data.aws_alb.questo-alb.dns_name, "${var.env}.questo.live"]
+#  validation_method         = "DNS"
+#
+#  zone_id = data.aws_route53_zone.questo.zone_id
+#
+#  tags = {
+#    Environment = var.env
+#  }
+#}
 
-  create_certificate = true
-
+resource "aws_acm_certificate" "cert" {
   domain_name               = "questo.live"
   subject_alternative_names = [data.aws_alb.questo-alb.dns_name, "${var.env}.questo.live"]
   validation_method         = "DNS"
 
-  zone_id = data.aws_route53_zone.questo.zone_id
-
   tags = {
     Environment = var.env
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
-
-
 
 resource "aws_route53_record" "questo" {
   for_each = {
-    for dvo in module.acm.acm_certificate_domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.cert.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -44,6 +56,6 @@ resource "aws_route53_record" "questo" {
 }
 
 resource "aws_acm_certificate_validation" "questo" {
-  certificate_arn         = module.acm.acm_certificate_arn
+  certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for record in aws_route53_record.questo : record.fqdn]
 }
