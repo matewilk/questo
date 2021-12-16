@@ -13,7 +13,7 @@ interface Config {
 }
 
 // currently ssl: true is not in use
-// it's handled by AWS ALB (see tf/app/main.tf)
+// it's handled by AWS ALB (see tf/app/main & tf/app/route53)
 export default (app: Express) => {
   const configurations: Config = {
     development: { ssl: false, port: 4000, hostname: "localhost " },
