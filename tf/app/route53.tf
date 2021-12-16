@@ -40,9 +40,9 @@ resource "aws_route53_record" "questo" {
 
 resource "aws_route53_record" "alb-routing" {
   name    = "${var.env}.questo.live"
-  records = ["dualstack.${data.aws_alb.questo-alb.dns_name}"]
+  records = [data.aws_alb.questo-alb.d]
   ttl     = 300
-  type    = "A"
+  type    = "CNAME"
   zone_id = data.aws_route53_zone.questo.zone_id
 }
 
