@@ -1,6 +1,7 @@
 resource "aws_acm_certificate" "cert" {
-  domain_name       = "questo.live"
-  validation_method = "DNS"
+  domain_name               = "questo.live"
+  subject_alternative_names = [kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname]
+  validation_method         = "DNS"
 
   tags = {
     Environment = var.env
