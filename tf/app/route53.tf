@@ -40,8 +40,9 @@ resource "aws_route53_record" "questo" {
 
 resource "aws_route53_record" "alb-routing" {
   name    = "${var.env}.questo.live"
-  type    = "A"
   records = [data.aws_alb.questo-alb.dns_name]
+  ttl     = 300
+  type    = "A"
   zone_id = data.aws_route53_zone.questo.zone_id
 }
 
