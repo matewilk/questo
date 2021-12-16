@@ -22,4 +22,4 @@ variable "aws_secret_access_key" {
   sensitive = true
 }
 
-variable "db-table-name" {}
+variable "db_table_name" {}

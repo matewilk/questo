@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_dynamodb_table" "questo-db-table" {
   hash_key       = "ID"
   range_key      = "RecordType"
-  name           = var.db-table-name
+  name           = var.db_table_name
   billing_mode   = "PROVISIONED"
   read_capacity  = 1
   write_capacity = 1
