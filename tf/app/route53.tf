@@ -1,6 +1,10 @@
+data "aws_alb" "questo-alb" {
+  name = "questo-alb-${var.env}"
+}
+
 resource "aws_acm_certificate" "cert" {
   domain_name               = "questo.live"
-  subject_alternative_names = [kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname]
+  subject_alternative_names = [data.aws_alb.questo-alb.dns_name]
   validation_method         = "DNS"
 
   tags = {

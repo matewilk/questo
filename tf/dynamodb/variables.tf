@@ -10,4 +10,4 @@ variable "questo-infra-bucket" {
   default = "questo-infra"
 }
 
-variable "db_table_name" {}
+variable "db-table-name" {}

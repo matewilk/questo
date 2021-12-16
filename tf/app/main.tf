@@ -25,7 +25,7 @@ resource "kubernetes_secret" "questo-server-secrets" {
     AWS_REGION            = var.region
     AWS_ACCESS_KEY_ID     = var.aws_access_key_id
     AWS_SECRET_ACCESS_KEY = var.aws_secret_access_key
-    DB_TABLE_NAME         = var.db_table_name
+    DB_TABLE_NAME         = var.db-table-name
     REDIS_HOST            = data.kubernetes_service.redis-master.spec.0.cluster_ip
     REDIS_PORT            = data.kubernetes_service.redis-master.spec.0.port.0.port
   }
@@ -100,7 +100,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     namespace = kubernetes_namespace.app-namespace.metadata.0.name
     annotations = {
       "kubernetes.io/ingress.class"                  = "alb"
-      "alb.ingress.kubernetes.io/load-balancer-name" = "questo-alb-${var.env}"
+      "alb.ingress.kubernetes.io/load-balancer-name" = var.questo_alb_name
       "alb.ingress.kubernetes.io/group.name"         = "questo-${var.env}"
       "alb.ingress.kubernetes.io/group.order"        = "999"
       "alb.ingress.kubernetes.io/target-type"        = "ip"
