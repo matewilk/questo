@@ -127,6 +127,10 @@ resource "kubernetes_ingress" "questo-server-ingress" {
   }
 }
 
+output "questo_acm_certificate_arn" {
+  value = aws_acm_certificate.cert.arn
+}
+
 output "questo_api_url" {
   value = "https://${aws_route53_record.alb-routing.name}/api"
 }
