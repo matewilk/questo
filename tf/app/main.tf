@@ -116,7 +116,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     rule {
       http {
         path {
-          path = "/*"
+          path = "/api"
           backend {
             service_name = kubernetes_service.questo-server-service.metadata.0.name
             service_port = 4000
@@ -127,8 +127,12 @@ resource "kubernetes_ingress" "questo-server-ingress" {
   }
 }
 
+output "questo_api_url" {
+  value = "https://${aws_route53_record.alb-routing.name}/api"
+}
+
 output "load_balancer_hostname" {
-  value = "http://${kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname}:4000"
+  value = kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname
 }
 
 output "load_balancer_name" {
