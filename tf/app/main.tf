@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "questo-server" {
       spec {
         container {
           name  = "questo-server-container-${var.env}"
-          image = "matewilk/questo-server-image-${var.env}:latest"
+          image = "matewilk/questo-server-image-${var.env}"
 
           port {
             container_port = 4000
@@ -105,9 +105,10 @@ resource "kubernetes_ingress" "questo-server-ingress" {
       "alb.ingress.kubernetes.io/group.order"        = "999"
       "alb.ingress.kubernetes.io/target-type"        = "ip"
       "alb.ingress.kubernetes.io/scheme"             = "internet-facing"
-      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTP\": 4000}]"
+      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTPS\": 443}, {\"HTTP\": 4000}]"
       "alb.ingress.kubernetes.io/healthcheck-path"   = "/health"
       "alb.ingress.kubernetes.io/healthcheck-port"   = "traffic-port"
+      "alb.ingress.kubernetes.io/certificate-arn"    = aws_acm_certificate.cert.arn
     }
   }
 
@@ -115,7 +116,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     rule {
       http {
         path {
-          path = "/*"
+          path = "/api"
           backend {
             service_name = kubernetes_service.questo-server-service.metadata.0.name
             service_port = 4000
@@ -126,8 +127,16 @@ resource "kubernetes_ingress" "questo-server-ingress" {
   }
 }
 
+output "questo_acm_certificate_arn" {
+  value = aws_acm_certificate.cert.arn
+}
+
+output "questo_api_url" {
+  value = "https://${aws_route53_record.alb-routing.name}/api"
+}
+
 output "load_balancer_hostname" {
-  value = "http://${kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname}:4000"
+  value = kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname
 }
 
 output "load_balancer_name" {

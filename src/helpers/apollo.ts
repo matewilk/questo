@@ -48,7 +48,7 @@ export default async (
   });
 
   await server.start();
-  server.applyMiddleware({ app, path: "/" });
+  server.applyMiddleware({ app, path: "/api" });
 
   const subscriptionServer = SubscriptionServer.create(
     {
@@ -64,7 +64,7 @@ export default async (
         console.log("Disconnected!");
       },
     },
-    { server: httpServer, path: "/" }
+    { server: httpServer, path: "/api" }
   );
 
   return server;
