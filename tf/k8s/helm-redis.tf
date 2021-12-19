@@ -13,9 +13,9 @@ variable "extraEnvVars" {
 resource "helm_release" "redis-chart" {
   name = "redis-${var.env}"
 
-  repository = "https://charts.bitnami.com/bitnami"
-  chart      = "redis"
-  namespace  = "redis"
+  repository       = "https://charts.bitnami.com/bitnami"
+  chart            = "redis"
+  namespace        = "redis"
   create_namespace = true
 
   set {
