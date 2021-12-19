@@ -44,3 +44,4 @@ resource "helm_release" "k8s-dashboard" {
 # Navigate to the dashboard:
 # http://localhost:8001/api/v1/namespaces/k8s-dashboard-dev/services/https:k8s-dashboard-dev-kubernetes-dashboard:https/proxy/#/cluster?namespace=default
 #
+# use the token from step 1 to login
