@@ -9,7 +9,7 @@
     "docker:dev:start": "docker-compose up",
     "docker:dev:stop": "docker-compose down",
     "test": "jest ./src",
-    "test:e2e": "jest ./e2e"
+    "test:e2e": "jest ./e2e --testTimeout=10000"
   },
   "author": "matewilk",
   "license": "ISC",

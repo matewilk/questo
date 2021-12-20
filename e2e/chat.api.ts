@@ -1,18 +1,18 @@
 import axios from "axios";
+import { gql } from "apollo-server";
 
 const API_URL = process.env.API_URL;
 
-export const subscribeToChat = async (variables: { id: string }) =>
-  await axios.post("ws://localhost:4000/api", {
-    query: `
-      subscription Subscription($id: String) {
-        chat(id: $id) {
-          message
-        }
+export const subscribeToChat = (variables: { id: string }) => ({
+  query: gql`
+    subscription Subscription($id: String) {
+      chat(id: $id) {
+        message
       }
-    `,
-    variables,
-  });
+    }
+  `,
+  variables,
+});
 
 export const sendChatMessage = async (variables: {
   chatId: string;

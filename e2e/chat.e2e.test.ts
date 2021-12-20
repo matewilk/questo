@@ -2,6 +2,7 @@ import { gql } from "apollo-server";
 import { PubSub } from "graphql-subscriptions";
 
 import { gqClient } from "./helpers/wsApolloTestClient";
+import { subscribeToChat, sendChatMessage } from "./chat.api";
 
 describe("Chat", () => {
   describe("Subscription", () => {
@@ -13,16 +14,7 @@ describe("Chat", () => {
 
         gqClient(pubSub)
           // subscribe to chat
-          .subscribe({
-            query: gql`
-              subscription Subscription($id: String) {
-                chat(id: $id) {
-                  message
-                }
-              }
-            `,
-            variables: { id: chatId },
-          })
+          .subscribe(subscribeToChat({ id: chatId }))
           // resolve on event publish
           .subscribe({
             next({ data }) {
@@ -41,4 +33,17 @@ describe("Chat", () => {
       });
     });
   });
+
+  describe("Mutation", () => {
+    describe("sendMessage(chatId: String!, message: String!): Message", () => {
+      it('publishes a message on pubsub bus and returns it', async () => {
+        const message = "test message 2";
+
+        const { data } = await sendChatMessage({ chatId: "123", message })
+        const result = data.data.sendMessage.message;
+
+        expect(result).toEqual(message);
+      })
+    })
+  })
 });
