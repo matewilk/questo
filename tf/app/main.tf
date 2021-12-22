@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "questo-server" {
       spec {
         container {
           name  = "questo-server-container-${var.env}"
-          image = "matewilk/questo-server-image-${var.env}"
+          image = "matewilk/questo-server-image-${var.env}:latest"
 
           port {
             container_port = 4000
