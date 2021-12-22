@@ -135,6 +135,10 @@ output "questo_api_url" {
   value = "https://${aws_route53_record.alb-routing.name}/api"
 }
 
+output "questo_api_ws_url" {
+  value = "wss://${aws_route53_record.alb-routing.name}/api"
+}
+
 output "load_balancer_hostname" {
   value = kubernetes_ingress.questo-server-ingress.status.0.load_balancer.0.ingress.0.hostname
 }

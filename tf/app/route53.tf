@@ -39,7 +39,7 @@ resource "aws_route53_record" "questo" {
 }
 
 resource "aws_route53_record" "alb-routing" {
-  name    = "${var.env}.questo.live"
+  name    = var.env == "production" ? "questo.live" : "${var.env}.questo.live"
   records = [data.aws_alb.questo-alb.dns_name]
   ttl     = 300
   type    = "CNAME"
