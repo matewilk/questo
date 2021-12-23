@@ -99,16 +99,17 @@ resource "kubernetes_ingress" "questo-server-ingress" {
     name      = "questo-server-ingress-${var.env}"
     namespace = kubernetes_namespace.app-namespace.metadata.0.name
     annotations = {
-      "kubernetes.io/ingress.class"                  = "alb"
-      "alb.ingress.kubernetes.io/load-balancer-name" = "questo-alb-${var.env}"
-      "alb.ingress.kubernetes.io/group.name"         = "questo-${var.env}"
-      "alb.ingress.kubernetes.io/group.order"        = "999"
-      "alb.ingress.kubernetes.io/target-type"        = "ip"
-      "alb.ingress.kubernetes.io/scheme"             = "internet-facing"
-      "alb.ingress.kubernetes.io/listen-ports"       = "[{\"HTTPS\": 443}, {\"HTTP\": 4000}]"
-      "alb.ingress.kubernetes.io/healthcheck-path"   = "/health"
-      "alb.ingress.kubernetes.io/healthcheck-port"   = "traffic-port"
-      "alb.ingress.kubernetes.io/certificate-arn"    = aws_acm_certificate.cert.arn
+      "kubernetes.io/ingress.class"                        = "alb"
+      "alb.ingress.kubernetes.io/load-balancer-name"       = "questo-alb-${var.env}"
+      "alb.ingress.kubernetes.io/group.name"               = "questo-${var.env}"
+      "alb.ingress.kubernetes.io/group.order"              = "999"
+      "alb.ingress.kubernetes.io/target-type"              = "ip"
+      "alb.ingress.kubernetes.io/scheme"                   = "internet-facing"
+      "alb.ingress.kubernetes.io/listen-ports"             = "[{\"HTTPS\": 443}, {\"HTTP\": 4000}]"
+      "alb.ingress.kubernetes.io/healthcheck-path"         = "/health"
+      "alb.ingress.kubernetes.io/healthcheck-port"         = "traffic-port"
+      "alb.ingress.kubernetes.io/certificate-arn"          = aws_acm_certificate.cert.arn
+      "alb.ingress.kubernetes.io/load-balancer-attributes" = "idle_timeout.timeout_seconds=10"
     }
   }
 
