@@ -109,7 +109,7 @@ resource "kubernetes_ingress" "questo-server-ingress" {
       "alb.ingress.kubernetes.io/healthcheck-path"         = "/health"
       "alb.ingress.kubernetes.io/healthcheck-port"         = "traffic-port"
       "alb.ingress.kubernetes.io/certificate-arn"          = aws_acm_certificate.cert.arn
-      "alb.ingress.kubernetes.io/load-balancer-attributes" = "idle_timeout.timeout_seconds=3600"
+      "alb.ingress.kubernetes.io/load-balancer-attributes" = "idle_timeout.timeout_seconds=600"
     }
   }
 
