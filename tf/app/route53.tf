@@ -1,4 +1,5 @@
 data "aws_alb" "questo-alb" {
+  depends_on = [kubernetes_ingress.questo-server-ingress]
   name = "questo-alb-${var.env}"
 }
 
