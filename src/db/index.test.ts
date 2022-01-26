@@ -1,5 +1,6 @@
 import Database from "./index";
 import AWS from "aws-sdk";
+import * as process from "process";
 
 jest.mock("aws-sdk", () => {
   return {
@@ -30,7 +31,9 @@ describe("Database", () => {
 
   it("should connect to db driver successfully", () => {
     expect(AWS.DynamoDB.DocumentClient).toHaveBeenCalledWith({
-      endpoint: `https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`,
+      endpoint:
+        process.env.DB_URL ||
+        `https://dynamodb.${process.env.AWS_REGION}.amazonaws.com`,
       region: "local",
       accessKeyId: "local",
       secretAccessKey: "local",
