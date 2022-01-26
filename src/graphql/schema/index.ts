@@ -4,7 +4,7 @@ import userSchema from "./user";
 import answerSchema from "./answer";
 import questionSchema from "./question";
 import healthSchema from "./health";
-import subscriptionSchema from "./subscription";
+import chatSchema from "./chat";
 
 const linkSchema = gql`
   type Query {
@@ -26,5 +26,5 @@ export default [
   userSchema,
   answerSchema,
   questionSchema,
-  subscriptionSchema,
+  chatSchema,
 ];

@@ -86,7 +86,7 @@ describe("Question", () => {
 
       expect(data.data.questions).toHaveProperty("edges");
       expect(data.data.questions).toHaveProperty("pageInfo");
-      expect(data.data.questions.edges.length).toBeGreaterThanOrEqual(4);
+      expect(data.data.questions.edges.length).toBeGreaterThanOrEqual(3);
       expect(data.data.questions.pageInfo).toHaveProperty("cursor");
       expect(data.data.questions.pageInfo).toHaveProperty("count");
     });

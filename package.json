@@ -9,7 +9,7 @@
     "docker:dev:start": "docker-compose up",
     "docker:dev:stop": "docker-compose down",
     "test": "jest ./src",
-    "test:e2e": "jest ./e2e"
+    "test:e2e": "jest ./e2e --testTimeout=10000"
   },
   "author": "matewilk",
   "license": "ISC",
@@ -29,10 +29,10 @@
     "ioredis": "^4.28.2",
     "passport": "^0.5.0",
     "passport-local": "^1.0.0",
-    "shortid": "^2.2.16",
-    "subscriptions-transport-ws": "^0.11.0"
+    "shortid": "^2.2.16"
   },
   "devDependencies": {
+    "@apollo/client": "^3.5.6",
     "@babel/preset-typescript": "^7.15.0",
     "@babel/register": "^7.15.3",
     "@types/connect-redis": "^0.0.18",
@@ -43,9 +43,12 @@
     "@types/passport-local": "^1.0.34",
     "@types/shortid": "^0.0.29",
     "axios": "^0.23.0",
+    "graphql-subscriptions": "^2.0.0",
     "jest": "^27.2.5",
+    "mock-socket-with-protocol": "^7.1.1",
     "nodemon": "^2.0.13",
     "prettier": "^2.4.1",
+    "subscriptions-transport-ws": "^0.11.0",
     "typescript": "^4.4.4"
   },
   "jest": {

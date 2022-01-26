@@ -1,8 +1,8 @@
 export default {
   Subscription: {
-    messageSent: {
-      subscribe(_, __, { pubSub }) {
-        return pubSub.asyncIterator("MESSAGE_SENT");
+    chat: {
+      subscribe(_, { id }, { pubSub }) {
+        return pubSub.asyncIterator(`CHAT_${id}`);
       },
       resolve: (payload) => {
         return {
@@ -13,8 +13,8 @@ export default {
   },
 
   Mutation: {
-    sendMessage: async (_, { message }, { pubSub }) => {
-      pubSub.publish("MESSAGE_SENT", { message });
+    sendMessage: async (_, { chatId, message }, { pubSub }) => {
+      pubSub.publish(`CHAT_${chatId}`, { message });
       return {
         message,
       };
