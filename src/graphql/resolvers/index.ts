@@ -3,6 +3,7 @@ import answerResolver from "./answer";
 import userResolver from "./user";
 import healthResolver from "./health";
 import chatResolver from "./chat";
+import gameResolver from "./game";
 
 export default [
   questionResolver,
@@ -10,4 +11,5 @@ export default [
   userResolver,
   healthResolver,
   chatResolver,
+  gameResolver,
 ];
