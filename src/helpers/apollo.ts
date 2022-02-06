@@ -20,7 +20,7 @@ export default async (
     schema,
     plugins: [
       {
-        async ServerWillStart() {
+        async serverWillStart() {
           return {
             async drainServer() {
               subscriptionServer.close();
